@@ -53,12 +53,12 @@ public class MyModel extends Observable implements Model{
 	{
 		super();
 		
-		File map = new File("solutionMap.txt");
+		File map = new File("External files/solutionMap.txt");
 		if(map.exists())
 		{
 			ObjectInputStream mapLoader;
 			try {
-				mapLoader = new ObjectInputStream(new GZIPInputStream(new FileInputStream(new File("solutionMap.txt"))));
+				mapLoader = new ObjectInputStream(new GZIPInputStream(new FileInputStream(new File("External files/solutionMap.txt"))));
 				solutionMap = (HashMap<Maze3d, Solution<Position>>) mapLoader.readObject();
 				mapLoader.close();
 			} catch (FileNotFoundException e) {
@@ -582,7 +582,7 @@ public class MyModel extends Observable implements Model{
 			
 			modelCompletedCommand =11;
 			TP.shutdownNow();
-			ObjectOutputStream mapSave = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(new File("solutionMap.txt"))));
+			ObjectOutputStream mapSave = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(new File("External files/solutionMap.txt"))));
 			mapSave.writeObject(this.solutionMap);
 			mapSave.flush();
 			mapSave.close();
