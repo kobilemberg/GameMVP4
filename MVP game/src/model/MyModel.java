@@ -7,6 +7,8 @@ package model;
  * class goal is to act as MVC Model and perform all business logic calculations.
  */
 
+import java.beans.XMLDecoder;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
 import IO.MyCompressorOutputStream;
 import IO.MyDecompressorInputStream;
 import algorithms.demo.Demo;
@@ -34,6 +37,7 @@ import algorithms.mazeGenerators.MyMaze3dGenerator;
 import algorithms.mazeGenerators.Position;
 import algorithms.mazeGenerators.SimpleMaze3dGenerator;
 import algorithms.search.Solution;
+import presenter.Properties;
 
 
 public class MyModel extends Observable implements Model{
@@ -43,7 +47,7 @@ public class MyModel extends Observable implements Model{
 	HashMap<String, Maze3d> maze3dMap = new HashMap<String, Maze3d>();
 	HashMap<Maze3d, Solution<Position>> solutionMap = new HashMap<Maze3d, Solution<Position>>();
 	HashMap<String, Thread> openThreads = new HashMap<String,Thread>();
-	
+	Properties properties;
 	//Constructors
 	/**
 	* Instantiates a new  my own model.
@@ -61,6 +65,7 @@ public class MyModel extends Observable implements Model{
 				mapLoader = new ObjectInputStream(new GZIPInputStream(new FileInputStream(new File("External files/solutionMap.txt"))));
 				solutionMap = (HashMap<Maze3d, Solution<Position>>) mapLoader.readObject();
 				mapLoader.close();
+				this.properties = read("External files/Properties.xml");
 			} catch (FileNotFoundException e) {
 				errorNoticeToControlelr("Problam with solution map file");
 			} catch (IOException e) {
@@ -68,10 +73,16 @@ public class MyModel extends Observable implements Model{
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
 				errorNoticeToControlelr("problam with class");
+			} catch (Exception e) {
+				errorNoticeToControlelr("Problem with xml");
+				e.printStackTrace();
 			}
 		}
 		else
 			solutionMap = new HashMap<Maze3d, Solution<Position>>();
+		
+	
+		
 	}
 	/**
 	* Instantiates a new  my own model with given controller
@@ -625,5 +636,12 @@ public class MyModel extends Observable implements Model{
 	public void setModelCommandCommand(int commandNum){modelCompletedCommand=commandNum;}
 	
 	
-	
+	public static Properties read(String filename) throws Exception {
+        XMLDecoder decoder =
+            new XMLDecoder(new BufferedInputStream(
+                new FileInputStream(filename)));
+        Properties properties = (Properties)decoder.readObject();
+        decoder.close();
+        return properties;
+    }
 }
