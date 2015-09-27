@@ -25,7 +25,7 @@ public class Presenter implements Observer {
 	* @param model Model represent the model layer
 	* @return new MyController as instance
 	* */
-		public Presenter(MyView view, MyModel model) {
+		public Presenter(View view, Model model) {
 			super();
 			this.view = view;
 			this.model = model;
@@ -42,7 +42,7 @@ public class Presenter implements Observer {
 						view.setUserCommand(1);
 						//((Observable)view).hasChanged();
 						//((Observable)view).setChanged();
-						(view).notifyObservers(args);
+						((Observable)view).notifyObservers(args);
 						//String files = model.dir(args[0]);
 						//view.printFilesAndDirectories(files.toString());
 					} catch (NullPointerException e) {

@@ -14,37 +14,38 @@ public class Properties implements Serializable
 	//protected int defaultAlgorith;
 	//protected int defaultSolver;
 	protected int numOfThreads;
-	protected  StringBuilder defaultAlgorith;
-	protected  StringBuilder defaultSolver;
+	protected  String defaultAlgorith;
+	protected  String defaultSolver;
 	
 	public Properties() {
 		//super();
-		this.numOfThreads = 2;
-		this.defaultAlgorith = new StringBuilder("MyMaze3dGenerator");
-		this.defaultSolver = new StringBuilder("A*");
+		numOfThreads = 2;
+		defaultAlgorith = new String("MyMaze3dGenerator");
+		defaultSolver = new String("A*");
 	}
 	
 	
 	
-	public Properties(int numOfThreads,final String defaultAlgorith1, final String defaultSolver1) {
+	public Properties(int numOfThreads,String defaultAlgorith,String defaultSolver) {
 		super();
 		this.numOfThreads = numOfThreads;
-		this.defaultAlgorith = new StringBuilder(defaultAlgorith1);
-		this.defaultSolver = new StringBuilder(defaultSolver1);
+		this.defaultAlgorith = defaultAlgorith;
+		this.defaultSolver = defaultSolver;
 	}
 	
 	
 
 	
-	
-	
+
+
+
+
 	/**
 	 * @return the numOfThreads
 	 */
 	public int getNumOfThreads() {
 		return numOfThreads;
 	}
-
 
 
 
@@ -57,54 +58,52 @@ public class Properties implements Serializable
 
 
 
-
 	/**
 	 * @return the defaultAlgorith
 	 */
-	public final StringBuilder getDefaultAlgorith() {
+	public String getDefaultAlgorith() {
 		return defaultAlgorith;
 	}
-
 
 
 
 	/**
 	 * @param defaultAlgorith the defaultAlgorith to set
 	 */
-	public final void setDefaultAlgorith(final StringBuilder defaultAlgorith) {
+	public void setDefaultAlgorith(String defaultAlgorith) {
 		this.defaultAlgorith = defaultAlgorith;
 	}
-
 
 
 
 	/**
 	 * @return the defaultSolver
 	 */
-	public StringBuilder getDefaultSolver() {
+	public String getDefaultSolver() {
 		return defaultSolver;
 	}
-
 
 
 
 	/**
 	 * @param defaultSolver the defaultSolver to set
 	 */
-	public void setDefaultSolver(StringBuilder defaultSolver) {
+	public void setDefaultSolver(String defaultSolver) {
 		this.defaultSolver = defaultSolver;
 	}
 
 
 
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
+	/**
+	 * @return the serialversionuid
 	 */
-	@Override
-	public int hashCode() {
-		return this.toString().hashCode();
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
+
+
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
