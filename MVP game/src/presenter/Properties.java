@@ -11,17 +11,16 @@ public class Properties implements Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	//protected int defaultAlgorith;
-	//protected int defaultSolver;
+
 	protected int numOfThreads;
 	protected  String defaultAlgorith;
 	protected  String defaultSolver;
 	
 	public Properties() {
 		//super();
-		numOfThreads = 2;
-		defaultAlgorith = new String("MyMaze3dGenerator");
-		defaultSolver = new String("A*");
+		//numOfThreads = 2;
+		//defaultAlgorith = new String("MyMaze3dGenerator");
+	//	defaultSolver = new String("A*");
 	}
 	
 	

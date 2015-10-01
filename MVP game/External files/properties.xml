@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <java version="1.8.0_51" class="java.beans.XMLDecoder">
  <object class="presenter.Properties">
+  <void property="defaultAlgorith">
+   <string>MyMaze3dGenerator</string>
+  </void>
+  <void property="defaultSolver">
+   <string>A*</string>
+  </void>
   <void property="numOfThreads">
    <int>3</int>
   </void>
