@@ -53,10 +53,10 @@ public class MyModel extends Observable implements Model{
 	* Instantiates a new  my own model.
 	*/
 	@SuppressWarnings("unchecked")
-	public MyModel()
+	public MyModel(Properties p)
 	{
 		super();
-		
+		this.properties = p;
 		File map = new File("External files/solutionMap.txt");
 		if(map.exists())
 		{

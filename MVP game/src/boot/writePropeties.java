@@ -18,7 +18,7 @@ public class writePropeties {
 			String deafultAlgorithm = "MyMaze3dGenerator";
 			String defaultSolver ="A*";
 			
-			encoder.writeObject(new Properties(3, deafultAlgorithm, defaultSolver));
+			encoder.writeObject(new Properties(3, deafultAlgorithm, defaultSolver,"CLI"));
 			//encoder.flush();
 			encoder.close();
 		} catch (Exception e) {

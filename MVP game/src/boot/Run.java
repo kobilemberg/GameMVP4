@@ -1,10 +1,15 @@
 package boot; 
 
+import java.beans.XMLDecoder;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import model.MyModel;
 import presenter.Presenter;
+import presenter.Properties;
 import view.MyView;
 
 
@@ -12,10 +17,24 @@ public class Run {
 
 	public static void main(String[] args) 
 	{
-		// TODO Auto-generated method stub
+		
+		XMLDecoder decoder=null;
+		try {
+			decoder=new XMLDecoder(new BufferedInputStream(new FileInputStream("External files/properties.xml")));
+		} catch (FileNotFoundException e) {
+			System.out.println("ERROR: File External files/properties.xml not found");
+		}
+		Properties properties=(Properties)decoder.readObject();
+		System.out.println(properties);
+		
 		MyView view = new MyView(new BufferedReader(new InputStreamReader(System.in)),new PrintWriter(System.out));
+		if(properties.getUI().equals("GUI"))
+			view = new MyView(new BufferedReader(new InputStreamReader(System.in)),new PrintWriter(System.out));
+
+		
 		//MyView view = new MyView(System.in, System.out);
-		MyModel model = new MyModel();
+		MyModel model = new MyModel(properties);
+	
 	//	MyController controller = new MyController(view, model);
 		Presenter presenter = new Presenter(view, model);
 		view.addObserver(presenter);

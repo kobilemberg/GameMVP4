@@ -4,13 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import model.Model;
-import model.MyModel;
-import view.MyView;
 import view.View;
 
 public class Presenter implements Observer {

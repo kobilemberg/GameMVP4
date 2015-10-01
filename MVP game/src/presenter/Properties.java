@@ -15,6 +15,7 @@ public class Properties implements Serializable
 	protected int numOfThreads;
 	protected  String defaultAlgorith;
 	protected  String defaultSolver;
+	protected String UI;
 	
 	public Properties() {
 		//super();
@@ -25,16 +26,21 @@ public class Properties implements Serializable
 	
 	
 	
-	public Properties(int numOfThreads,String defaultAlgorith,String defaultSolver) {
+	public Properties(int numOfThreads,String defaultAlgorith,String defaultSolver,String UI) {
 		super();
 		this.numOfThreads = numOfThreads;
 		this.defaultAlgorith = defaultAlgorith;
 		this.defaultSolver = defaultSolver;
+		this.UI=UI;
 	}
 	
 	
 
 	
+
+
+
+
 
 
 
@@ -94,12 +100,29 @@ public class Properties implements Serializable
 
 
 	/**
+	 * @return the uI
+	 */
+	public String getUI() {
+		return UI;
+	}
+
+
+
+	/**
+	 * @param uI the uI to set
+	 */
+	public void setUI(String uI) {
+		UI = uI;
+	}
+
+
+
+	/**
 	 * @return the serialversionuid
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
 
 
 
@@ -110,14 +133,18 @@ public class Properties implements Serializable
 	public boolean equals(Object obj) {
 		return this.toString().equals(obj.toString());
 	}
+
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "Properties [numOfThreads=" + numOfThreads + ", defaultAlgorith=" + defaultAlgorith + ", defaultSolver="
-				+ defaultSolver + "]";
+				+ defaultSolver + ", UI=" + UI + "]";
 	}
+	
 	
 	
 	
