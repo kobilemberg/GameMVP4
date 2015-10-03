@@ -136,13 +136,7 @@ String cliMenu;
 		commands.get(inputLineAsArray[0]).doCommand(inputLineAsArray);
 		out.println("Exiting from the program...Bye!");
 		out.flush();
-		try {
-			in.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		out.close();
+		try {in.close();} catch (IOException e) {e.printStackTrace();}out.close();
 	}
 	@Override 
 	/**
@@ -193,9 +187,7 @@ String cliMenu;
 	 * This method will set the cli menu
 	 * @param cliMenu represent the menu of the cli
 	 */
-	public void setCLIMenu(String cliMenu) {this.cliMenu=cliMenu;
-	//System.out.println(cliMenu);
-	}
+	public void setCLIMenu(String cliMenu) {this.cliMenu=cliMenu;}
 	/**
 	 * This method will print the cliMenu to the screen
 	 */
@@ -207,10 +199,6 @@ String cliMenu;
 			out.println(cliMenu);
 			out.flush();
 		}
-		else
-		{
-			System.out.println("Error while printing the menu, menu seems to be empty.");
-		}
-		
+		else{System.out.println("Error while printing the menu, menu seems to be empty.");}
 	}
 }

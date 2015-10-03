@@ -50,7 +50,6 @@ public class MyView extends Observable implements View {
 		super();
 		this.in = in;
 		this.out=out;
-		//this.setChanged();
 	}
 	/**
 	 * Instantiates a new  my own maze3d generator with given controller layer as instance
@@ -63,7 +62,6 @@ public class MyView extends Observable implements View {
 		this.controller = controller;
 		this.in = new BufferedReader(new InputStreamReader(System.in));
 		this.out = new PrintWriter(System.out);
-		//cli = new CLI(new BufferedReader(new InputStreamReader(System.in)), new PrintWriter(System.out),controller.viewCommandMap);
 	}
 	/**
 	 * Instantiates a new  my own maze3d generator with given: controller layer as instance, BufferedReader in and PrintWriter out
@@ -97,10 +95,7 @@ public class MyView extends Observable implements View {
 	* this method will set the controller to work with
 	* @param controller Controller represent the controller layer to work with
 	*/
-	public void setController(Controller controller)
-	{
-		this.controller = controller;
-	}
+	public void setController(Controller controller){this.controller = controller;}
 	
 	@Override
 	/**
@@ -118,10 +113,7 @@ public class MyView extends Observable implements View {
 		for (int i=0;i<arr.length;i++)
 		{
 			strOfMazeMatrix+="{";
-			for(int j=0;j<arr[0].length;j++)
-			{
-						strOfMazeMatrix+=arr[i][j];
-			}
+			for(int j=0;j<arr[0].length;j++){strOfMazeMatrix+=arr[i][j];}
 			strOfMazeMatrix+="}\n";
 		}
 		out.println(strOfMazeMatrix);
@@ -165,24 +157,29 @@ public class MyView extends Observable implements View {
 	@Override
 	public void tellTheUsersizeOfMazeInRam(String mazeName,Double size) {
 		out.println("The size of maze: "+mazeName+" in ram memory is:" +size+"b");
-		out.flush();}
+		out.flush();
+	}
 	
 	@Override
 	public void tellTheUsersizeOfMazeInFile(String fileName, double sizeOfFile) {
 		out.println("The size of file: "+fileName+" is: "+sizeOfFile+"b");	
-		out.flush();}
+		out.flush();
+	}
 	
 	@Override
 	public void tellTheUserSolutionIsReady(String mazeName) {
 		out.println("Solution for "+mazeName+" is Ready, you can take it!");
-		out.flush();}
+		out.flush();
+	}
 	
 	@Override
 	public void printSolutionToUser(String mazeName,Solution<Position> solution) {
 		out.println("Solution of: "+mazeName+"\n");
 		out.flush();
-		for (State<Position> p: solution.getSolution()){out.println(p.getCameFromAction() + " To: "+p.toString());
-		out.flush();}
+		for (State<Position> p: solution.getSolution()){
+			out.println(p.getCameFromAction() + " To: "+p.toString());
+			out.flush();
+			}
 	}
 	
 	@Override
@@ -193,39 +190,32 @@ public class MyView extends Observable implements View {
 		if(cliMenu!=null)
 			cli.cliMenu = cliMenu;
 	}
+	
 	@Override
 	public void setCommandsMenu(String cliMenu) {
 		this.cliMenu = cliMenu;
-		if(cli!=null)
-		{
-			cli.setCLIMenu(cliMenu);
-		}
-			
+		if(cli!=null){cli.setCLIMenu(cliMenu);}	
 	}
+	
 	@Override
 	public void errorNoticeToUser(String s) {
-		out.println("Error:\n"+s);
-		out.flush();
-		
+		out.println("Notification:\n"+s);
+		out.flush();	
 	}
-	@Override
-	public int getUserCommand() {
-		return this.userCommand;
-		
 	
-	}
 	@Override
-	public void setUserCommand(int commandID) {
+	public int getUserCommand() {return this.userCommand;}
+	
+	@Override
+	public void setUserCommand(int commandID) 
+	{
 		this.setChanged();
 		this.userCommand = commandID;
-		
 	}
+	
 	@Override
 	public void displayData(Object data) {
 		out.println(data);
-		out.flush();
-		
+		out.flush();		
 	}
-	
-	
 }

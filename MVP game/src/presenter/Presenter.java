@@ -34,20 +34,9 @@ public class Presenter implements Observer {
 				public void doCommand(String[] args) 
 				{
 					try {
-						//System.out.println("Presenter");
-						//((Observable)view).hasChanged();
 						view.setUserCommand(1);
-						//((Observable)view).hasChanged();
-						//((Observable)view).setChanged();
 						((Observable)view).notifyObservers(args);
-						//String files = model.dir(args[0]);
-						//view.printFilesAndDirectories(files.toString());
-					} catch (NullPointerException e) {
-						e.printStackTrace();
-
-					}
-					
-					
+					} catch (NullPointerException e) {e.printStackTrace();}	
 				}
 			});
 			
@@ -77,10 +66,7 @@ public class Presenter implements Observer {
 					try {
 						view.setUserCommand(3);
 						((Observable)view).notifyObservers(args);
-						//view.printMazeToUser(model.getMazeWithName(args[0]),args[0]);
-					} catch (NullPointerException e) {
-						view.errorNoticeToUser("Exception: there is no maze named "+args[0]);
-					}
+					} catch (NullPointerException e) {view.errorNoticeToUser("Exception: there is no maze named "+args[0]);}
 				}
 			});
 			
@@ -89,17 +75,10 @@ public class Presenter implements Observer {
 				@Override
 				public void doCommand(String[] args) 
 				{
-					//args[1] = Axe,args[2] = index ,args[3] = Name
 					try {
-						
 						view.setUserCommand(4);
 						((Observable)view).notifyObservers(args);
-						//int[][] crossedArr = model.getCrossSectionByAxe(args[0],args[1],args[3]);
-						//view.printToUserCrossedArray(crossedArr,args[0],args[1],args[3]);
-					} catch (Exception e) {
-						e.printStackTrace();
-						view.errorNoticeToUser("Exception: problem with args");
-					}
+					} catch (Exception e) {view.errorNoticeToUser("Exception: problem with args");}
 				}
 			});
 			
@@ -110,44 +89,24 @@ public class Presenter implements Observer {
 				public void doCommand(String[] args) {
 					
 					try {
-						
-						if(!(args[0].isEmpty()||args[1].isEmpty()))
-						{
-							view.setUserCommand(5);
-							((Observable)view).notifyObservers(args);
-
-							//model.saveCompressedMazeToFile(args[0],args[1]);
-							//view.tellTheUserTheMazeIsSaved(args[0],args[1]);
-						}
-						else
-						{
-							
-							view.errorNoticeToUser("problem with args");	
-						}
-					} catch (Exception e) {
-						//e.printStackTrace();
-						view.errorNoticeToUser("Exception: problem with args");
-					}
+							if(!(args[0].isEmpty()||args[1].isEmpty()))
+							{
+								view.setUserCommand(5);
+								((Observable)view).notifyObservers(args);
+							}
+							else{view.errorNoticeToUser("problem with args");}
+					} catch (Exception e) {view.errorNoticeToUser("Exception: problem with args");}
 				}
 			});
 			
 			viewCommandMap.put("load maze",new Command() 
 			{
 				@Override
-				//args[1] = fileName, args[2] = name
 				public void doCommand(String[] args) {
-					
 					try {
 						view.setUserCommand(6);
 						((Observable)view).notifyObservers(args);
-					//	model.loadAndDeCompressedMazeToFile(args[0],args[1]);
-						
-					//	if(model.isLoaded(args[1]))
-					//		view.tellTheUserTheMazeIsLoaded(args[0],args[1]);
-					} catch (Exception e) {
-					//	e.printStackTrace();
-						view.errorNoticeToUser("Exception: problem with args");
-					}
+					} catch (Exception e) {view.errorNoticeToUser("Exception: problem with args");}
 				}
 			});
 			
@@ -159,9 +118,6 @@ public class Presenter implements Observer {
 					try {
 						view.setUserCommand(7);
 						((Observable)view).notifyObservers(args);
-					//	double sizeOfMazeInRam = model.getSizeOfMazeInRam(args[0]);
-					//	if (sizeOfMazeInRam>0)
-					//		view.tellTheUsersizeOfMazeInRam(args[0],sizeOfMazeInRam);
 					}catch (Exception e) {
 						e.printStackTrace();
 						view.errorNoticeToUser("Exception: problem with args");
@@ -177,32 +133,24 @@ public class Presenter implements Observer {
 					try {
 						view.setUserCommand(8);
 						((Observable)view).notifyObservers(args);
-						//double sizeOfFile = model.getSizeOfMazeInFile(args[0]);
-						//if (sizeOfFile>0)
-						//	view.tellTheUsersizeOfMazeInFile(args[0],sizeOfFile);
 					} catch (Exception e) {
 						e.printStackTrace();
 						view.errorNoticeToUser("Exception: problem with args");
-					}
-						
+					}	
 				}
 			});
 			
 			viewCommandMap.put("solve",new Command() 
 			{
 				@Override
-				//args[1] = mazeName,args[2] = Algorithm
 				public void doCommand(String[] args) {
 						try {
 							view.setUserCommand(9);
 							((Observable)view).notifyObservers(args);
-						//	model.solveMaze(args[0],args[1]);
 						} catch (Exception e) {
 							e.printStackTrace();
 							view.errorNoticeToUser("Exception: problem with args");
-						}
-						
-						
+						}	
 				}
 			});
 			
@@ -214,15 +162,10 @@ public class Presenter implements Observer {
 						try {
 							view.setUserCommand(10);
 							((Observable)view).notifyObservers(args);
-						//	Solution<Position> solution = model.getSolutionOfMaze(args[0]);
-						//	if(solution!=null)
-						//		view.printSolutionToUser(args[0],solution);
 						} catch (NullPointerException e) {
 							e.printStackTrace();
 							view.errorNoticeToUser("Exception: unexisted solution");
 						}
-						
-						
 				}
 			});
 			
@@ -234,8 +177,6 @@ public class Presenter implements Observer {
 					((Observable)view).notifyObservers(args);
 					model.exit();}
 			});
-			
-
 			String cliMenu=new String();
 			cliMenu+= "1:	dir <path>\n";
 			cliMenu+= "2:	generate 3d maze <Maze name> <MyMaze3dGenerator\\SimpleMaze3dGenerator> <X> <Y> <Z>\n";
@@ -248,7 +189,6 @@ public class Presenter implements Observer {
 			cliMenu+= "9:	solve <Maze name> <A*\\BFS>\n";
 			cliMenu+= "10:	display solution <Maze name>\n";
 			cliMenu+= "11:	exit\n";
-			
 			view.setCommands(viewCommandMap);
 			view.setCommandsMenu(cliMenu);
 			
@@ -286,7 +226,6 @@ public class Presenter implements Observer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object args) {
-//		System.out.println("update before if");
 		if(o==view)
 		{
 			String[] argArr = ((String[])args).clone();
@@ -294,22 +233,15 @@ public class Presenter implements Observer {
 			int input = view.getUserCommand();
 			switch (input) {
 			case 1:
-			//	System.out.println("Update");
-				try {
-					model.dir(argArr[0]);
-				} catch (Exception e) {
-					view.errorNoticeToUser("Exception: Illegal path");
-				}
-				
+				try {model.dir(argArr[0]);} catch (Exception e) {view.errorNoticeToUser("Exception: Illegal path");}
 				break;
+			
 			case 2:
-				try {
-					model.generateMazeWithName(argArr[0], argArr[1],  argArr[2],  argArr[3],  argArr[4]);
-				} catch (Exception e) {
+				try {model.generateMazeWithName(argArr[0], argArr[1],  argArr[2],  argArr[3],  argArr[4]);}
+				catch (Exception e) {
+					e.printStackTrace();
 					view.errorNoticeToUser("Exception: Wrong parameters, Usage:generate 3d maze <name> <generator> <other params>");
 				}
-				//generateMazeWithName(name, generator, floors, lines, columns);
-				
 				break;
 
 			case 3:
@@ -317,66 +249,42 @@ public class Presenter implements Observer {
 				break;
 
 			case 4:
-				try {
-					model.getCrossSectionByAxe(argArr[0], argArr[1], argArr[3]);
-				} catch (Exception e) {
-					//e.printStackTrace();
-					view.errorNoticeToUser("Exception: problem with args");
-				}
-				
+				try {model.getCrossSectionByAxe(argArr[0], argArr[1], argArr[3]);} catch (Exception e) {view.errorNoticeToUser("Exception: problem with args");}
 				break;
 
 			case 5:
-				try {
-					
-					model.saveCompressedMazeToFile(argArr[0], argArr[1]);
-				} catch (IOException e) {
-					view.errorNoticeToUser("Exception: problem with args");
-					//e.printStackTrace();
-				}
+				try {model.saveCompressedMazeToFile(argArr[0], argArr[1]);} catch (IOException e) {view.errorNoticeToUser("Exception: problem with args");}
 				break;
+				
 			case 6:
-				try {
-					model.loadAndDeCompressedMazeToFile(argArr[0], argArr[1]);
-				} catch (IOException e) {
-					view.errorNoticeToUser("Exception: problem with args");
-					//e.printStackTrace();
-				}
+				try {model.loadAndDeCompressedMazeToFile(argArr[0], argArr[1]);} catch (IOException e) {view.errorNoticeToUser("Exception: problem with args");}
 				break;
+				
 			case 7:
-				try {
-					model.getSizeOfMazeInRam(argArr[0]);
-				} catch (Exception e) {
+				try {model.getSizeOfMazeInRam(argArr[0]);} 
+				catch (Exception e) {
 					e.printStackTrace();
 					view.errorNoticeToUser("Exception: problem with args");
 				}
-				
 				break;
+				
 			case 8:
-				try {
-					model.getSizeOfMazeInFile(argArr[0]);
-				} catch (Exception e) {
+				try {model.getSizeOfMazeInFile(argArr[0]);} 
+				catch (Exception e) {
 					e.printStackTrace();
 					view.errorNoticeToUser("Exception: problem with args");
 				}
 				
 				break;
 			case 9:
-				try {
-					model.solveMaze(argArr[0], argArr[1]);
-				} catch (Exception e) {
-					view.errorNoticeToUser("Exception: problem with args");
-				}
-				
+				try {model.solveMaze(argArr[0], argArr[1]);} catch (Exception e) {view.errorNoticeToUser("Exception: problem with args");}
 				break;
+				
 			case 10:
 				try {
-					model.getSolutionOfMaze(argArr[0]);
-				} catch (Exception e) {
-					view.errorNoticeToUser("Exception: problem with args");
-				}
-				
+					model.getSolutionOfMaze(argArr[0]);} catch (Exception e) {view.errorNoticeToUser("Exception: problem with args");}
 				break;
+				
 			case 11:
 				model.exit();
 				break;
@@ -385,7 +293,6 @@ public class Presenter implements Observer {
 				break;
 			}
 		}
-		
 		
 		
 		else if(o==model)
@@ -439,14 +346,11 @@ public class Presenter implements Observer {
 					dataToPassToView = (Object[]) model.getData();
 					view.tellTheUsersizeOfMazeInFile((String)dataToPassToView[0], (double)dataToPassToView[1]);
 					break;
-				
-					
-					
+							
 				case 9:
 					//solve <Maze name> <A*\BFS>
 					view.tellTheUserSolutionIsReady((String)(model.getData()));
 					break;
-				
 					
 				case 10:
 					//display solution <Maze name>   //Solution<Position>
@@ -463,13 +367,7 @@ public class Presenter implements Observer {
 					break;
 			}
 		}
-		
-		
-		
-
 	}
-
-		
 }
 
 

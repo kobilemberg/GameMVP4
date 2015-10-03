@@ -41,9 +41,10 @@ import presenter.Properties;
 
 
 public class MyModel extends Observable implements Model{
-	ExecutorService TP = Executors.newCachedThreadPool();
+	
 	Object data;
 	int modelCompletedCommand=0;
+	ExecutorService TP ;
 	HashMap<String, Maze3d> maze3dMap = new HashMap<String, Maze3d>();
 	HashMap<Maze3d, Solution<Position>> solutionMap = new HashMap<Maze3d, Solution<Position>>();
 	HashMap<String, Thread> openThreads = new HashMap<String,Thread>();
@@ -56,7 +57,9 @@ public class MyModel extends Observable implements Model{
 	public MyModel(Properties p)
 	{
 		super();
-		this.properties = p;
+		this.properties = p; 
+		this.TP = Executors.newFixedThreadPool(p.getNumOfThreads());
+		
 		File map = new File("External files/solutionMap.txt");
 		if(map.exists())
 		{
@@ -66,23 +69,22 @@ public class MyModel extends Observable implements Model{
 				solutionMap = (HashMap<Maze3d, Solution<Position>>) mapLoader.readObject();
 				mapLoader.close();
 				this.properties = read("External files/Properties.xml");
-			} catch (FileNotFoundException e) {
-				errorNoticeToControlelr("Problam with solution map file");
-			} catch (IOException e) {
+			} 
+			catch (FileNotFoundException e) {errorNoticeToControlelr("Problam with solution map file");} 
+			catch (IOException e) 
+			{
 				errorNoticeToControlelr("Problam with solution map file(IO)");
 				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				errorNoticeToControlelr("problam with class");
-			} catch (Exception e) {
+			} 
+			catch (ClassNotFoundException e) {errorNoticeToControlelr("problam with class");} 
+			catch (Exception e) 
+			{
 				errorNoticeToControlelr("Problem with xml");
 				e.printStackTrace();
 			}
 		}
 		else
 			solutionMap = new HashMap<Maze3d, Solution<Position>>();
-		
-	
-		
 	}
 	/**
 	* Instantiates a new  my own model with given controller
@@ -106,19 +108,11 @@ public class MyModel extends Observable implements Model{
 			File folder = new File(dir);
 			if((folder.exists()&&folder.isDirectory()))
 			{
-				
-				//if(folder.isDirectory())
 				{
 					String strOfDir ="Files and Directories in: "+dir+"\n";
-					for (String fileOrDirectory: folder.list())
-					{
-						strOfDir+=fileOrDirectory+"\n";
-					}
-				//	System.out.println("StrOfDir: "+strOfDir);
-					//return strOfDir;
+					for (String fileOrDirectory: folder.list()){strOfDir+=fileOrDirectory+"\n";}
 					this.data = strOfDir;
 					this.modelCompletedCommand=1;
-				//	System.out.println("Modell");
 					this.setChanged();
 					notifyObservers();
 				}
@@ -128,43 +122,56 @@ public class MyModel extends Observable implements Model{
 		}
 		else
 			errorNoticeToControlelr("Illegal path");
-		//return null;
 	}
+	
 	@Override
 	public void generateMazeWithName(String name, String generator, String floors, String lines, String columns) {
-		
-		if(floors.isEmpty()||lines.isEmpty()||columns.isEmpty())
-		{
-			errorNoticeToControlelr("Wrong parameters, Usage:generate 3d maze <name> <generator> <other params>");
-		}
-		
+		if(floors.isEmpty()||lines.isEmpty()||columns.isEmpty()){errorNoticeToControlelr("Wrong parameters, Usage: generate 3d maze <name> <generator> <other params>");}
 		Callable<Maze3d> generateMazeThread = new Callable<Maze3d>() 
 		{
-
 			@Override
 			public Maze3d call() throws Exception 
 			{
-				Maze3dGenerator maze = new MyMaze3dGenerator();
+				Maze3dGenerator maze;
 				if(generator.equals("mymaze3dgenerator"))
+				{
 					maze = new MyMaze3dGenerator();
-				else if(generator.equals("simplemazegenerator"))
-					maze = new SimpleMaze3dGenerator();
-				else 
-					maze = new MyMaze3dGenerator();
+					errorNoticeToControlelr("Generating maze with MyMaze3dGenerator as your request.");
+				}
 				
+				else if(generator.equals("simplemazegenerator"))
+				{
+					maze = new SimpleMaze3dGenerator();
+					errorNoticeToControlelr("Generating maze with simplemazegenerator as your request.");
+				}
+					
+				else if(properties.getDefaultAlgorith().equals("SimpleMazeGenerator"))
+				{
+					errorNoticeToControlelr("Generating maze with SimpleMaze3dGenerator as your properties file.");
+					maze = new SimpleMaze3dGenerator();
+				}
+				else if(properties.getDefaultAlgorith().equals("MyMaze3dGenerator"))
+				{
+					errorNoticeToControlelr("Generating maze with MyMaze3dGenerator as your properties file.");
+					maze = new MyMaze3dGenerator();
+				}
+				else
+				{
+					errorNoticeToControlelr("Generating maze with MyMaze3dGenerator because there were no configurations.");
+					maze = new MyMaze3dGenerator();
+				}
 				if(!floors.isEmpty()&&!lines.isEmpty()&&!columns.isEmpty())
 				{
+					System.out.println("Generating");
 					maze3dMap.put(name, maze.generate(new Integer(floors),new Integer(lines),new Integer(columns)));
-					
 					this.mazeIsReady(name);
 					return maze3dMap.get(name);
 				}
 				else
 				{	
-					errorNoticeToControlelr("Wrong parameters, Usage:generate 3d maze <name> <generator> <other params>");
+					errorNoticeToControlelr("Wrong parameters, Usage: generate 3d maze <name> <generator> <other params>");
 					return null;
 				}
-				
 			}
 
 			private void mazeIsReady(String name) 
@@ -173,65 +180,12 @@ public class MyModel extends Observable implements Model{
 				modelCompletedCommand=2;
 				setData(name);
 				notifyObservers();
-				
 			}
-			
 		};
 		TP.submit(generateMazeThread);
-		
-		
 	}
 	
-	/*
-	Old generateMazeWithName with Runnable
-	@Override
-	public void generateMazeWithName(String name, String generator, String floors, String lines, String columns) {
-		
-		if(floors.isEmpty()||lines.isEmpty()||columns.isEmpty())
-		{
-			errorNoticeToControlelr("Wrong parameters, Usage:generate 3d maze <name> <generator> <other params>");
-		}
-		
-		Thread generateMazeThread = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				Maze3dGenerator maze = new MyMaze3dGenerator();
-				if(generator.equals("mymaze3dgenerator"))
-					maze = new MyMaze3dGenerator();
-				else if(generator.equals("simplemazegenerator"))
-					maze = new SimpleMaze3dGenerator();
-				else 
-					maze = new MyMaze3dGenerator();
-				
-				if(!floors.isEmpty()&&!lines.isEmpty()&&!columns.isEmpty())
-				{
-					maze3dMap.put(name, maze.generate(new Integer(floors),new Integer(lines),new Integer(columns)));
-					
-					this.mazeIsReady(name);
-					
-				}
-				else
-				{	
-					errorNoticeToControlelr("Wrong parameters, Usage:generate 3d maze <name> <generator> <other params>");
-				}
-				
-			}
 
-			private void mazeIsReady(String name) {
-				setChanged();
-				modelCompletedCommand=2;
-				setData(name);
-				notifyObservers();
-				
-			}
-		}, "generateMazeThread");
-		openThreads.put(generateMazeThread.getName(), generateMazeThread);
-		TP.submit(generateMazeThread);
-		
-		
-	}*/
-	
 	@Override
 	public void getMazeWithName(String nameOfMaze) {
 		
@@ -255,37 +209,24 @@ public class MyModel extends Observable implements Model{
 			//Floors
 			if(axe.equals("x"))
 			{
-				if(  (new Integer(index)) >=0 && (new Integer(index)) < maze.getMaze().length)
-				{
-					arrToRet = maze.getCrossSectionByX(new Integer(index));
-				}
+				if((new Integer(index)) >=0 && (new Integer(index)) < maze.getMaze().length){arrToRet = maze.getCrossSectionByX(new Integer(index));}
 				else{errorNoticeToControlelr("illegal index, llegal indexes are:0-"+maze.getMaze().length);}
 			}
 			//Lines
 			else if(axe.equals("y"))
 			{
-				if(  (new Integer(index)) >=0 && (new Integer(index)) < maze.getMaze()[0].length)
-				{
-					arrToRet = maze.getCrossSectionByY(new Integer(index));
-				}
+				if((new Integer(index)) >=0 && (new Integer(index)) < maze.getMaze()[0].length){arrToRet = maze.getCrossSectionByY(new Integer(index));}
 				else{errorNoticeToControlelr("illegal index, llegal indexes are:0-"+maze.getMaze()[0].length);}
 			}
 			//Columns
 			else if(axe.equals("z"))
 			{
-				if(  (new Integer(index)) >=0 && (new Integer(index)) < maze.getMaze()[0][0].length)
-				{
-					arrToRet = maze.getCrossSectionByZ(new Integer(index));
-				}
+				if((new Integer(index)) >=0 && (new Integer(index)) < maze.getMaze()[0][0].length){arrToRet = maze.getCrossSectionByZ(new Integer(index));}
 				else{errorNoticeToControlelr("illegal index, llegal indexes are:0-"+maze.getMaze()[0][0].length);}
 			}
-			
 			else{errorNoticeToControlelr("incorrect axe, the options are: X,Y,Z");}
 		}
-		else if(!maze3dMap.containsKey(mazeName))
-		{
-			errorNoticeToControlelr("problem with args");
-		}
+		else if(!maze3dMap.containsKey(mazeName)){errorNoticeToControlelr("problem with args");}
 		if(arrToRet!=null)
 		{
 			Object[] argsToRet= new Object[4];
@@ -293,26 +234,16 @@ public class MyModel extends Observable implements Model{
 			argsToRet[1] = axe;
 			argsToRet[2] = index;
 			argsToRet[3] = mazeName;
-			
-			
 			this.setData(argsToRet );
 			this.modelCompletedCommand=4;
 			setChanged();
 			notifyObservers();
 		}
-		else
-		{
-			errorNoticeToControlelr("problem with args");
-		}
-		
+		else{errorNoticeToControlelr("problem with args");}
 	}
 	@Override
 	public void saveCompressedMazeToFile(String mazeName, String fileName) throws IOException {
-		
-		if(fileName.isEmpty()||mazeName.isEmpty())
-		{
-			errorNoticeToControlelr("Cannot resolve filename\\maze name");
-		}
+		if(fileName.isEmpty()||mazeName.isEmpty()){errorNoticeToControlelr("Cannot resolve filename\\maze name");}
 		else
 		{
 			if(maze3dMap.containsKey(mazeName))
@@ -349,13 +280,10 @@ public class MyModel extends Observable implements Model{
 						this.notifyObservers();
 					}
 					else{errorNoticeToControlelr("It seems that file exists/Cannot create file.");}
-						
 				}
-			
 			}
 			else
 			{
-				
 				errorNoticeToControlelr("The name is incorrect");
 				throw new NullPointerException("There is no maze " +mazeName);
 			}
@@ -363,16 +291,12 @@ public class MyModel extends Observable implements Model{
 	}
 	@Override
 	public void loadAndDeCompressedMazeToFile(String fileName, String mazeName) throws IOException {
-		if(fileName.isEmpty()||mazeName.isEmpty())
-		{
-			errorNoticeToControlelr("File not found\\Cannot resolve maze name");
-		}
+		if(fileName.isEmpty()||mazeName.isEmpty()){errorNoticeToControlelr("File not found\\Cannot resolve maze name");}
 		else
 		{
 			File file = new File(fileName);
 			if(file.exists())
-			{
-				
+			{	
 				@SuppressWarnings("resource")
 				FileInputStream fileIn = new FileInputStream(fileName);//Opening the file
 				byte[] dimensionsArr = new byte[12];//array of diemensions
@@ -415,7 +339,6 @@ public class MyModel extends Observable implements Model{
 				throw new FileNotFoundException("File not found");
 			}
 		}
-		
 	}
 	@Override
 	public void getSizeOfMazeInRam(String mazeName) {
@@ -435,10 +358,7 @@ public class MyModel extends Observable implements Model{
 	@Override
 	public void getSizeOfMazeInFile(String fileName) {
 		File f = new File(fileName);
-		if(!f.exists())
-		{
-			errorNoticeToControlelr("File "+fileName+" doesnt exists");
-		}
+		if(!f.exists()){errorNoticeToControlelr("File "+fileName+" doesnt exists");}
 		else
 		{
 			Object[] dataToSet = new Object[2];
@@ -475,26 +395,31 @@ public class MyModel extends Observable implements Model{
 							Demo d = new Demo();
 							SearchableMaze3d searchableMaze = new SearchableMaze3d(maze3dMap.get(mazeName));
 							if(algorithm.equals("bfs"))
-							{		
-								Solution<Position> solutionToAdd = d.solveSearchableMazeWithBFS(searchableMaze);
-								solutionMap.put(maze3dMap.get(mazeName), solutionToAdd);
-								modelCompletedCommand=9;
-								setData(mazeName);
-								setChanged();
-								notifyObservers();
-								return solutionMap.get(maze3dMap.get(mazeName));
+							{
+								errorNoticeToControlelr("Solving with BFS as your request.");
+								solveWithBFS(mazeName, d, searchableMaze);	
 							}
 							else if(algorithm.equals("a*"))
 							{
-								Solution<Position> solutionToAdd = d.solveSearchableMazeWithAstarByManhatenDistance(searchableMaze);
-								solutionMap.put(maze3dMap.get(mazeName), solutionToAdd);
-								modelCompletedCommand=9;
-								setChanged();
-								setData(mazeName);
-								notifyObservers();
-								return solutionMap.get(maze3dMap.get(mazeName));
+								errorNoticeToControlelr("Solving with A* as your request.");
+								solveWithAstar(mazeName, d, searchableMaze);
 							}
-							else{errorNoticeToControlelr("Algorithm: "+algorithm+" is not valid!");}
+							
+							else if (properties.getDefaultSolver().equals("A*"))
+							{
+								errorNoticeToControlelr("Solving with A* as your properties file.");
+								solveWithAstar(mazeName, d, searchableMaze);
+							}
+							else if (properties.getDefaultSolver().equals("BFS"))
+							{
+								errorNoticeToControlelr("Solving with BFS as your properties file.");
+								solveWithBFS(mazeName, d, searchableMaze);
+							}
+							else 
+							{
+								errorNoticeToControlelr("Solving with A*.");
+								solveWithAstar(mazeName, d, searchableMaze);
+							}
 						}
 						return null;
 					}
@@ -504,69 +429,7 @@ public class MyModel extends Observable implements Model{
 		}
 		else{errorNoticeToControlelr("There is no maze named: "+mazeName);}
 	}
-		
-		
-	
-	
-/*
-  Old solveMaze with runnable
-	@Override
-	public void solveMaze(String mazeName, String algorithm) 
-	{
-		Thread mazeSolver = new Thread((new Runnable() {		
-			@Override
-			public void run() 
-			{
-				if(maze3dMap.containsKey(mazeName))
-				{
-					Demo d = new Demo();
-					SearchableMaze3d searchableMaze = new SearchableMaze3d(maze3dMap.get(mazeName));
-					if(solutionMap.containsKey(mazeName))
-					{
-						modelCompletedCommand=9;
-						setData(mazeName);
-						setChanged();
-						notifyObservers();
-						//controller.solutionIsReady(mazeName);
-						
-					}
-						
-					else
-					{
-						if(algorithm.equals("bfs"))
-						{		
-							Solution<Position> solutionToAdd = d.solveSearchableMazeWithBFS(searchableMaze);
-							solutionMap.put(mazeName, solutionToAdd);
-							modelCompletedCommand=9;
-							setData(mazeName);
-							setChanged();
-							notifyObservers();
-							//controller.solutionIsReady(mazeName);
-						}
-						else if(algorithm.equals("a*"))
-						{
-							Solution<Position> solutionToAdd = d.solveSearchableMazeWithAstarByManhatenDistance(searchableMaze);
-							solutionMap.put(mazeName, solutionToAdd);
-							modelCompletedCommand=9;
-							setChanged();
-							setData(mazeName);
-							notifyObservers();
-							//controller.solutionIsReady(mazeName);
-						}
-						else
-						{errorNoticeToControlelr("Algorithm: "+algorithm+" is not valid!");}
-					}
-				}
-				else
-				{errorNoticeToControlelr("There is no maze named: "+mazeName);}
-			}
-		}),"MazeSolverThread");
-		openThreads.put(mazeSolver.getName(), mazeSolver);
-		TP.submit(mazeSolver);
-	}
- */
-	
-	
+			
 	@Override
 	public void getSolutionOfMaze(String mazeName) {
 		
@@ -589,8 +452,6 @@ public class MyModel extends Observable implements Model{
 	@Override
 	public void exit() {
 		try {
-			
-			
 			modelCompletedCommand =11;
 			TP.shutdownNow();
 			ObjectOutputStream mapSave = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(new File("External files/solutionMap.txt"))));
@@ -618,18 +479,13 @@ public class MyModel extends Observable implements Model{
 		notifyObservers();
 	}
 	@Override
-	public boolean isLoaded(String mazeName) {
-		return maze3dMap.containsKey(mazeName);
-	}
+	public boolean isLoaded(String mazeName) {return maze3dMap.containsKey(mazeName);}
+	
 	@Override
-	public Object getData() {
-		// TODO Auto-generated method stub
-		return data;
-	}
+	public Object getData() {return data;}
+	
 	@Override
-	public void setData(Object o) {
-		this.data = o;
-	}
+	public void setData(Object o) {this.data = o;}
 	
 	public int getModelCompletedCommand(){return modelCompletedCommand;}
 	
@@ -637,11 +493,32 @@ public class MyModel extends Observable implements Model{
 	
 	
 	public static Properties read(String filename) throws Exception {
-        XMLDecoder decoder =
-            new XMLDecoder(new BufferedInputStream(
-                new FileInputStream(filename)));
+        XMLDecoder decoder =new XMLDecoder(new BufferedInputStream(new FileInputStream(filename)));
         Properties properties = (Properties)decoder.readObject();
         decoder.close();
         return properties;
     }
+	
+	private Solution<Position> solveWithAstar(String mazeName,Demo d,SearchableMaze3d searchableMaze)
+	{
+		Solution<Position> solutionToAdd = d.solveSearchableMazeWithAstarByManhatenDistance(searchableMaze);
+		solutionMap.put(maze3dMap.get(mazeName), solutionToAdd);
+		modelCompletedCommand=9;
+		setChanged();
+		setData(mazeName);
+		notifyObservers();
+		return solutionMap.get(maze3dMap.get(mazeName));
+	}
+	
+	
+	private Solution<Position> solveWithBFS(String mazeName,Demo d,SearchableMaze3d searchableMaze)
+	{
+		Solution<Position> solutionToAdd = d.solveSearchableMazeWithBFS(searchableMaze);
+		solutionMap.put(maze3dMap.get(mazeName), solutionToAdd);
+		modelCompletedCommand=9;
+		setChanged();
+		setData(mazeName);
+		notifyObservers();
+		return solutionMap.get(maze3dMap.get(mazeName));
+	}
 }
