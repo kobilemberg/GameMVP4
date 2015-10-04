@@ -30,7 +30,21 @@ public class MyView extends Observable implements View {
 	BufferedReader in;
 	PrintWriter out;
 	int userCommand=0;
-
+	MazeBasicWindow mazeWindow;
+	
+	
+	/**
+	 * @return the mazeWindow
+	 */
+	public MazeBasicWindow getMazeWindow() {
+		return mazeWindow;
+	}
+	/**
+	 * @param mazeWindow the mazeWindow to set
+	 */
+	public void setMazeWindow(MazeBasicWindow mazeWindow) {
+		this.mazeWindow = mazeWindow;
+	}
 	//Constructors
 	/**
 	 * Instantiates a new  my own maze3d generator.
@@ -102,7 +116,12 @@ public class MyView extends Observable implements View {
 	* this method will start to run the view layer
 	*/
 	public void start() {cli.start();}
-
+	public void start(String display) {
+		if(display.equals("CLI"))
+			cli.start();
+		else
+			mazeWindow.run();
+		}
 
 	/**
 	* this method will print int[][] array

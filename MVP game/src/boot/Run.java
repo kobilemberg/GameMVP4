@@ -7,9 +7,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+
 import model.MyModel;
 import presenter.Presenter;
 import presenter.Properties;
+import view.MazeBasicWindow;
 import view.MyView;
 
 
@@ -28,9 +30,11 @@ public class Run {
 		System.out.println(properties);
 		
 		MyView view = new MyView(new BufferedReader(new InputStreamReader(System.in)),new PrintWriter(System.out));
-		if(properties.getUI().equals("GUI"))
-			view = new MyView(new BufferedReader(new InputStreamReader(System.in)),new PrintWriter(System.out));
-
+		
+			
+			//view = new MyView(new BufferedReader(new InputStreamReader(System.in)),new PrintWriter(System.out),);
+		
+		
 		
 		//MyView view = new MyView(System.in, System.out);
 		MyModel model = new MyModel(properties);
@@ -41,7 +45,15 @@ public class Run {
 		model.addObserver(presenter);
 		//model.setController(controller);
 		//view.setController(controller);
-		view.start();
+		
+		if(properties.getUI().equals("GUI"))
+		{
+			MazeBasicWindow win=new MazeBasicWindow("3D Maze Game", 500, 300);
+			view.setMazeWindow(win);
+			view.start("GUI");
+		}
+		else
+			view.start("CLI");
 
 	}
 

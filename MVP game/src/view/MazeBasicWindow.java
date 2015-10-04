@@ -98,8 +98,8 @@ public class MazeBasicWindow extends BasicWindow{
 	}
 	
 	public static void main(String[] args) {
-		MazeBasicWindow win=new MazeBasicWindow("3D Maze Game", 500, 300);
-		win.run();
+		//MazeBasicWindow win=new MazeBasicWindow("3D Maze Game", 500, 300);
+		//win.run();
 	}
 
 }

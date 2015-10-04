@@ -2,7 +2,7 @@
 <java version="1.8.0_51" class="java.beans.XMLDecoder">
  <object class="presenter.Properties">
   <void property="UI">
-   <string>CLI</string>
+   <string>GUI</string>
   </void>
   <void property="defaultAlgorith">
    <string>SimpleMazeGenerator</string>
