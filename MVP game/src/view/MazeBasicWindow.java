@@ -16,6 +16,8 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
@@ -75,6 +77,24 @@ public class MazeBasicWindow extends BasicWindow{
 		InitalMaze();
 		shell.setLayout(new GridLayout(2,false));
 		initialKeyListeners();
+		Menu menuBar = new Menu(shell, SWT.BAR);
+        /* Main Bar Menu Items: File | Maze */
+		MenuItem cascadeFileMenu = new MenuItem(menuBar, SWT.CASCADE);
+        cascadeFileMenu.setText("&File");
+        MenuItem cascadeMazeMenu = new MenuItem(menuBar, SWT.CASCADE);
+        cascadeMazeMenu.setText("Maze");
+
+        /* File Menu Items: Open Properties, Exit */  
+        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+        cascadeFileMenu.setMenu(fileMenu);
+        MenuItem openProperties = new MenuItem(fileMenu, SWT.PUSH);
+        openProperties.setText("Open Properties");
+        MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
+        exitItem.setText("&Exit");
+        
+        /* Generate Menu*/
+        shell.setMenuBar(menuBar);
+        
 		Button startButton=new Button(shell, SWT.PUSH);
 		startButton.setText("Start");
 		startButton.setLayoutData(new GridData(SWT.FILL, SWT.None, false, false, 1, 1));
@@ -83,6 +103,22 @@ public class MazeBasicWindow extends BasicWindow{
 		stopButton.setText("Stop");
 		stopButton.setLayoutData(new GridData(SWT.None, SWT.None, false, false, 1, 1));
 		stopButton.setEnabled(false);
+		
+		exitItem.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+
+		
 		startButton.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -96,7 +132,6 @@ public class MazeBasicWindow extends BasicWindow{
 							public void run() {
 								//randomWalk(maze);
 								started=true;
-								
 							}
 						});
 					}
@@ -138,7 +173,6 @@ public class MazeBasicWindow extends BasicWindow{
             boolean LeftPresses=false;
             boolean PageDown = false;
             boolean PageUp = false;
-
             
 			@Override
 			public void keyReleased(KeyEvent e) 
@@ -317,7 +351,7 @@ public class MazeBasicWindow extends BasicWindow{
 	public boolean getFloorUpCrossedArr(String direction) {
 		
 		
-		if(direction.equals("UP"))
+		if(direction.toUpperCase().equals("UP"))
 		{
 			if(currentFloor>=0&&currentFloor<(this.mazeData.getMaze().length-1))
 			{
@@ -349,7 +383,7 @@ public class MazeBasicWindow extends BasicWindow{
 			}
 		}
 		
-		else if(direction.equals("DOWN"))
+		else if(direction.toUpperCase().equals("DOWN"))
 		{
 			if(currentFloor>=1&&currentFloor<=(this.mazeData.getMaze().length-1))
 			{
