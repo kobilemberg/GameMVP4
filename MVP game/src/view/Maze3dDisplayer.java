@@ -78,6 +78,7 @@ public class Maze3dDisplayer extends MazeDisplayer {
 	
 	private void moveCharacter(int x,int y){
 		if(x>=0 && x<mazeData[0].length && y>=0 && y<mazeData.length && mazeData[y][x]==0){
+			System.out.println("Moving from: ("+characterX+","+characterY+") to: ("+x+","+y+")");
 			characterX=x;
 			characterY=y;
 			getDisplay().syncExec(new Runnable() {
@@ -94,7 +95,7 @@ public class Maze3dDisplayer extends MazeDisplayer {
 	 * @see view.MazeDisplayer#moveUp()
 	 */
 	@Override
-	public void moveUp() {
+	public void moveForward() {
 		int x=characterX;
 		int y=characterY;
 		y=y-1;
@@ -104,7 +105,7 @@ public class Maze3dDisplayer extends MazeDisplayer {
 	 * @see view.MazeDisplayer#moveDown()
 	 */
 	@Override
-	public void moveDown() {
+	public void moveBackward() {
 		int x=characterX;
 		int y=characterY;
 		y=y+1;
@@ -131,11 +132,73 @@ public class Maze3dDisplayer extends MazeDisplayer {
 		moveCharacter(x, y);
 	}
 	
+	public void moveDown() {
+		int x=characterX;
+		int y=characterY;
+		moveCharacter(x, y);
+	}
+	
+	public void moveUp() {
+		int x=characterX;
+		int y=characterY;
+		moveCharacter(x, y);
+	}
+	
 	@Override
 	public void setCharacterPosition(int row, int col) {
 		characterX=col;
 		characterY=row;
 		moveCharacter(col,row);
 	}
+	/**
+	 * @return the characterX
+	 */
+	public int getCharacterX() {
+		return characterX;
+	}
+	/**
+	 * @param characterX the characterX to set
+	 */
+	public void setCharacterX(int characterX) {
+		this.characterX = characterX;
+	}
+	/**
+	 * @return the characterY
+	 */
+	public int getCharacterY() {
+		return characterY;
+	}
+	/**
+	 * @param characterY the characterY to set
+	 */
+	public void setCharacterY(int characterY) {
+		this.characterY = characterY;
+	}
+	/**
+	 * @return the exitX
+	 */
+	public int getExitX() {
+		return exitX;
+	}
+	/**
+	 * @param exitX the exitX to set
+	 */
+	public void setExitX(int exitX) {
+		this.exitX = exitX;
+	}
+	/**
+	 * @return the exitY
+	 */
+	public int getExitY() {
+		return exitY;
+	}
+	/**
+	 * @param exitY the exitY to set
+	 */
+	public void setExitY(int exitY) {
+		this.exitY = exitY;
+	}
 
+	
+	
 }

@@ -30,21 +30,9 @@ public class MyView extends Observable implements View {
 	BufferedReader in;
 	PrintWriter out;
 	int userCommand=0;
-	MazeBasicWindow mazeWindow;
+
 	
-	
-	/**
-	 * @return the mazeWindow
-	 */
-	public MazeBasicWindow getMazeWindow() {
-		return mazeWindow;
-	}
-	/**
-	 * @param mazeWindow the mazeWindow to set
-	 */
-	public void setMazeWindow(MazeBasicWindow mazeWindow) {
-		this.mazeWindow = mazeWindow;
-	}
+
 	//Constructors
 	/**
 	 * Instantiates a new  my own maze3d generator.
@@ -116,12 +104,7 @@ public class MyView extends Observable implements View {
 	* this method will start to run the view layer
 	*/
 	public void start() {cli.start();}
-	public void start(String display) {
-		if(display.equals("CLI"))
-			cli.start();
-		else
-			mazeWindow.run();
-		}
+
 
 	/**
 	* this method will print int[][] array
@@ -237,4 +220,70 @@ public class MyView extends Observable implements View {
 		out.println(data);
 		out.flush();		
 	}
+	
+	
+
+	/**
+	 * @return the cli
+	 */
+	public CLI getCli() {
+		return cli;
+	}
+	/**
+	 * @param cli the cli to set
+	 */
+	public void setCli(CLI cli) {
+		this.cli = cli;
+	}
+	/**
+	 * @return the viewCommandMap
+	 */
+	public HashMap<String, Command> getViewCommandMap() {
+		return viewCommandMap;
+	}
+
+	/**
+	 * @return the cliMenu
+	 */
+	public String getCliMenu() {
+		return cliMenu;
+	}
+	/**
+	 * @param cliMenu the cliMenu to set
+	 */
+	public void setCliMenu(String cliMenu) {
+		this.cliMenu = cliMenu;
+	}
+	/**
+	 * @return the in
+	 */
+	public BufferedReader getIn() {
+		return in;
+	}
+	/**
+	 * @param in the in to set
+	 */
+	public void setIn(BufferedReader in) {
+		this.in = in;
+	}
+	/**
+	 * @return the out
+	 */
+	public PrintWriter getOut() {
+		return out;
+	}
+	/**
+	 * @param out the out to set
+	 */
+	public void setOut(PrintWriter out) {
+		this.out = out;
+	}
+	/**
+	 * @return the controller
+	 */
+	public Controller getController() {
+		return controller;
+	}
+	
+	
 }

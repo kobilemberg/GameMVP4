@@ -110,4 +110,9 @@ public interface View {
 
 	public void displayData(Object data);
 	
+	
+
+	
+	public HashMap<String, Command> getViewCommandMap();
+	
 }

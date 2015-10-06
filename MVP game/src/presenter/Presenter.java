@@ -13,7 +13,7 @@ import view.View;
 public class Presenter implements Observer {
 	View view;
 	Model model;
-	
+	HashMap<String, Command> viewCommandMap;
 	
 	
 	/**
@@ -78,7 +78,9 @@ public class Presenter implements Observer {
 					try {
 						view.setUserCommand(4);
 						((Observable)view).notifyObservers(args);
-					} catch (Exception e) {view.errorNoticeToUser("Exception: problem with args");}
+					} catch (Exception e) {
+						e.printStackTrace();
+						view.errorNoticeToUser("Exception: problem with args");}
 				}
 			});
 			
@@ -189,6 +191,7 @@ public class Presenter implements Observer {
 			cliMenu+= "9:	solve <Maze name> <A*\\BFS>\n";
 			cliMenu+= "10:	display solution <Maze name>\n";
 			cliMenu+= "11:	exit\n";
+			this.viewCommandMap = viewCommandMap;
 			view.setCommands(viewCommandMap);
 			view.setCommandsMenu(cliMenu);
 			
@@ -196,6 +199,20 @@ public class Presenter implements Observer {
 
 	//Getters and setters
 		
+		/**
+	 * @return the viewCommandMap
+	 */
+	public HashMap<String, Command> getViewCommandMap() {
+		return viewCommandMap;
+	}
+
+	/**
+	 * @param viewCommandMap the viewCommandMap to set
+	 */
+	public void setViewCommandMap(HashMap<String, Command> viewCommandMap) {
+		this.viewCommandMap = viewCommandMap;
+	}
+
 		/**
 		 * This method will set controller view layer
 		 * @param view View represent the view layer
@@ -249,7 +266,9 @@ public class Presenter implements Observer {
 				break;
 
 			case 4:
-				try {model.getCrossSectionByAxe(argArr[0], argArr[1], argArr[3]);} catch (Exception e) {view.errorNoticeToUser("Exception: problem with args");}
+				try {model.getCrossSectionByAxe(argArr[0], argArr[1], argArr[3]);} catch (Exception e) {
+					e.printStackTrace();
+					view.errorNoticeToUser("Exception: problem with args");}
 				break;
 
 			case 5:

@@ -3,8 +3,10 @@
  */
 package Tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+//import static junit.framework.Assert.assertTrue;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,13 +16,13 @@ import org.junit.Test;
 import algorithms.demo.SearchableMaze3d;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.MyMaze3dGenerator;
-import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * @author Kobi
  *
  */
-public class AstarTests {
+public class AstarTests{
 
 	/**
 	 * @throws java.lang.Exception
@@ -56,7 +58,7 @@ public class AstarTests {
 
 	@Test
 	public void test() {
-		
+		System.out.println("Test");
 		MyMaze3dGenerator mg  = new MyMaze3dGenerator();
 		Maze3d oneOnOne = mg.generate(1, 1, 1);
 		Maze3d oneOnTwo = mg.generate(1, 1, 2);
@@ -68,10 +70,11 @@ public class AstarTests {
 		SearchableMaze3d oneOnTwoToCheck = new SearchableMaze3d(oneOnTwo); 
 		SearchableMaze3d emptyMazeToCheck = new SearchableMaze3d(emptyMaze); 
 		SearchableMaze3d nollMazeToCheck = new SearchableMaze3d(nollMaze); 
+		assert(1==0);
+		//assertTrue("aaa",1==0);
 		
-		assertTrue(1==0);
-
-		fail("Not yet implemented");
+	//	fail("Not yet implemented");
 	}
 
+	
 }

@@ -5,7 +5,7 @@
    <string>GUI</string>
   </void>
   <void property="defaultAlgorith">
-   <string>SimpleMazeGenerator</string>
+   <string>MyMaze3dGenerator</string>
   <!--SimpleMazeGenerator/MyMaze3dGenerator-->
   </void>
   <void property="defaultSolver">
@@ -13,7 +13,7 @@
    <!--BFS/A*-->
   </void>
   <void property="numOfThreads">
-   <int>3</int>
+   <int>30</int>
   </void>
  </object>
 </java>

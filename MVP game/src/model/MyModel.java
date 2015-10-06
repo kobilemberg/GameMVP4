@@ -123,9 +123,9 @@ public class MyModel extends Observable implements Model{
 		else
 			errorNoticeToControlelr("Illegal path");
 	}
-	
+
 	@Override
-	public void generateMazeWithName(String name, String generator, String floors, String lines, String columns) {
+	public synchronized void generateMazeWithName(String name, String generator, String floors, String lines, String columns) {
 		if(floors.isEmpty()||lines.isEmpty()||columns.isEmpty()){errorNoticeToControlelr("Wrong parameters, Usage: generate 3d maze <name> <generator> <other params>");}
 		Callable<Maze3d> generateMazeThread = new Callable<Maze3d>() 
 		{
@@ -187,7 +187,7 @@ public class MyModel extends Observable implements Model{
 	
 
 	@Override
-	public void getMazeWithName(String nameOfMaze) {
+	public synchronized void getMazeWithName(String nameOfMaze) {
 		
 		if(maze3dMap.containsKey(nameOfMaze))
 		{
@@ -201,7 +201,7 @@ public class MyModel extends Observable implements Model{
 		}
 	}
 	@Override
-	public void getCrossSectionByAxe(String axe, String index, String mazeName) {
+	public synchronized void getCrossSectionByAxe(String axe, String index, String mazeName) {
 		int[][] arrToRet = null;
 		if(maze3dMap.containsKey(mazeName))
 		{
