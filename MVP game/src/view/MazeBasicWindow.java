@@ -307,7 +307,7 @@ public class MazeBasicWindow extends BasicWindow{
 		this.mazeData = mazeWithName;
 		this.crossedArr = this.mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
 		maze.mazeData = crossedArr;
-		maze.setCharacterPosition(mazeWithName.getStartPosition().getYposition(), mazeWithName.getStartPosition().getZposition());
+		maze.setCharacterPosition(mazeWithName.getStartPosition().getZposition(), mazeWithName.getStartPosition().getYposition());
 		this.currentFloor = mazeData.getStartPosition().getXPosition();
 		out.println("Maze: "+name+"\n"+mazeWithName.toString());
 		out.flush();
@@ -326,9 +326,9 @@ public class MazeBasicWindow extends BasicWindow{
 				System.out.println("Next floor:");
 				printArr(crossedArrToCheck);
 				System.out.println("Charecter position: "+maze.getCharacterX()+","+maze.getCharacterY());
-				System.out.println("The cell is: "+crossedArrToCheck[maze.getCharacterX()][maze.getCharacterY()]);
+				System.out.println("The cell is: "+crossedArrToCheck[maze.getCharacterY()][maze.getCharacterX()]);
 				//this.crossedArr = this.mazeData.getCrossSectionByX(currentFloor+1);
-				if(crossedArrToCheck[maze.getCharacterX()][maze.getCharacterY()]==0)
+				if(crossedArrToCheck[maze.getCharacterY()][maze.getCharacterX()]==0)
 				{
 					this.crossedArr = crossedArrToCheck;
 					currentFloor++;
@@ -357,9 +357,9 @@ public class MazeBasicWindow extends BasicWindow{
 				int[][] crossedArrToCheck = this.mazeData.getCrossSectionByX(currentFloor-1);
 				System.out.println("Previous floor:");
 				printArr(crossedArrToCheck);
-				System.out.println("Charecter position: "+maze.getCharacterX()+","+maze.getCharacterY());
-				System.out.println("The cell is: "+crossedArrToCheck[maze.getCharacterX()][maze.getCharacterY()]);
-				if(crossedArrToCheck[maze.getCharacterX()][maze.getCharacterY()]==0)
+				System.out.println("Charecter position: "+maze.getCharacterY()+","+maze.getCharacterX());
+				System.out.println("The cell is: "+crossedArrToCheck[maze.getCharacterY()][maze.getCharacterX()]);
+				if(crossedArrToCheck[maze.getCharacterY()][maze.getCharacterX()]==0)
 				{
 					this.crossedArr =crossedArrToCheck;
 					currentFloor--;
