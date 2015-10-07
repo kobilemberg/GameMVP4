@@ -531,4 +531,26 @@ public class MyModel extends Observable implements Model{
 		notifyObservers();
 		return solutionMap.get(maze3dMap.get(mazeName));
 	}
+	
+	@Override
+	public boolean changePropertiesByFilename(String fileName) 
+	{	
+		Properties oldProperties = this.properties; 
+		
+		XMLDecoder decoder=null;
+		try {
+			decoder=new XMLDecoder(new BufferedInputStream(new FileInputStream(fileName)));
+		} catch (FileNotFoundException e) {
+			System.out.println("ERROR: File " + fileName + " was not found.");
+			return false; 
+		}
+		properties=(Properties)decoder.readObject();
+		setData(properties);
+		System.out.println(properties);
+		
+		
+		return true;
+	}
+	
+	
 }

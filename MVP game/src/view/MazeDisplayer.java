@@ -10,7 +10,9 @@ import org.eclipse.swt.widgets.Composite;
 public abstract class MazeDisplayer extends Canvas{
 	
 	// just as a stub...
-	int[][] mazeData={
+	int[][] mazeData
+		/*
+		={
 			{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 			{1,0,0,0,0,0,0,0,1,1,0,1,0,0,1},
 			{0,0,1,1,1,1,1,0,0,1,0,1,0,1,1},
@@ -21,7 +23,7 @@ public abstract class MazeDisplayer extends Canvas{
 			{1,0,1,1,0,1,1,0,1,1,0,0,0,1,1},
 			{1,0,0,0,0,0,0,0,0,1,0,1,0,0,1},
 			{1,1,1,1,1,1,1,1,1,1,1,1,0,1,1},
-		};
+		}*/;
 
 	
 	public MazeDisplayer(Composite parent, int style) {

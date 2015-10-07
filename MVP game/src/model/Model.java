@@ -116,6 +116,7 @@ public interface Model {
 	*/
 	public boolean isLoaded(String mazeName);
 
+	public boolean changePropertiesByFilename(String fileName); 
 
 	public Object getData();
 	public void setData(Object o);
