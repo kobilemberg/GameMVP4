@@ -1,32 +1,30 @@
 package view;
 
-import java.awt.FileDialog;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Text;
 
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import algorithms.search.State;
-
 import presenter.Command;
-import presenter.Controller;
 
 public class MazeBasicWindow extends BasicWindow{
 
@@ -87,8 +85,11 @@ public class MazeBasicWindow extends BasicWindow{
         cascadeFileMenu.setMenu(fileMenu);
         MenuItem openProperties = new MenuItem(fileMenu, SWT.PUSH);
         openProperties.setText("Open Properties");
+        MenuItem GenerateItem = new MenuItem(fileMenu, SWT.PUSH);
+        GenerateItem.setText("Generate Maze");
         MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
         exitItem.setText("&Exit");
+        
         
         /* Generate Menu*/
         shell.setMenuBar(menuBar);
@@ -106,6 +107,7 @@ public class MazeBasicWindow extends BasicWindow{
 		stopButton.setLayoutData(new GridData(SWT.None, SWT.None, false, false, 1, 1));
 		stopButton.setEnabled(false);
 		
+
 		/* What happens when a user clicks "File" > "Open Properties" */  
 		openProperties.addSelectionListener(new SelectionListener() {
 			
@@ -129,6 +131,29 @@ public class MazeBasicWindow extends BasicWindow{
 			}
 		});
 		
+		/* What happens when a user clicks "File" > "Generate Maze" */ 
+		GenerateItem.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				//TODO 
+				Dialog dialog = new Dialog(shell, SWT.CENTER) {
+					Text floors =new Text(shell, SWT.BORDER);
+					Text lines =new Text(shell, SWT.BORDER);
+					Text columns =new Text(shell, SWT.BORDER);
+					
+				};
+								
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+
 		/* What happens when a user clicks "File" > "Exit" */ 
 		exitItem.addSelectionListener(new SelectionListener() {
 			
@@ -341,6 +366,11 @@ public class MazeBasicWindow extends BasicWindow{
 	
 	@Override
 	public void printMazeToUser(Maze3d mazeWithName,String name) {
+
+		this.maze.setExitX(mazeWithName.getGoalPosition().getYposition());
+		this.maze.setExitY(mazeWithName.getGoalPosition().getZposition());
+		this.maze.setExitFloor(mazeWithName.getGoalPosition().getXPosition()); 
+		
 		this.mazeData = mazeWithName;
 		this.crossedArr = this.mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
 		maze.mazeData = crossedArr;
@@ -368,6 +398,7 @@ public class MazeBasicWindow extends BasicWindow{
 				{
 					this.crossedArr = crossedArrToCheck;
 					currentFloor++;
+					((Maze3dDisplayer) maze).setCurrentFloor(currentFloor);
 					maze.mazeData = crossedArr;
 					return true;
 				}
@@ -399,6 +430,7 @@ public class MazeBasicWindow extends BasicWindow{
 				{
 					this.crossedArr =crossedArrToCheck;
 					currentFloor--;
+					((Maze3dDisplayer) maze).setCurrentFloor(currentFloor);
 					maze.mazeData = crossedArr;
 					return true;
 				}

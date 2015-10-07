@@ -82,4 +82,6 @@ public abstract class MazeDisplayer extends Canvas{
 	 */
 	public abstract void setExitY(int exitY);
 
+	public abstract void setExitFloor(int xPosition);
+
 }
