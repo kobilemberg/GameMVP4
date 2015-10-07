@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.FileDialog;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -104,6 +105,24 @@ public class MazeBasicWindow extends BasicWindow{
 		stopButton.setLayoutData(new GridData(SWT.None, SWT.None, false, false, 1, 1));
 		stopButton.setEnabled(false);
 		
+		openProperties.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				org.eclipse.swt.widgets.FileDialog fileDialog = new org.eclipse.swt.widgets.FileDialog(shell, SWT.OPEN);
+				fileDialog.setText("Open Properties");
+				fileDialog.setFilterPath("C:/");
+				String[] fileTypes = {"*.xml"}; 
+				fileDialog.setFilterExtensions(fileTypes);
+				String selectedFile = fileDialog.open();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		exitItem.addSelectionListener(new SelectionListener() {
 			
 			@Override

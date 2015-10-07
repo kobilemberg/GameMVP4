@@ -49,6 +49,7 @@ public class MyModel extends Observable implements Model{
 	HashMap<Maze3d, Solution<Position>> solutionMap = new HashMap<Maze3d, Solution<Position>>();
 	HashMap<String, Thread> openThreads = new HashMap<String,Thread>();
 	Properties properties;
+	
 	//Constructors
 	/**
 	* Instantiates a new  my own model.
@@ -99,6 +100,15 @@ public class MyModel extends Observable implements Model{
 	* @param controller Controller represent the controller layer to work with
 	*/
 
+	public Properties getProperties() {
+		return properties;
+	}
+
+
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+	
 //Functionality
 	@Override
 	public void dir(String dir) throws NullPointerException
