@@ -5,13 +5,17 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 
+import algorithms.mazeGenerators.Maze3d;
+
 public class Maze3dDisplayer extends MazeDisplayer {
 
 	public int characterX=0;
 	public int characterY=2;
 	public int exitX=0;
-	public int exitY=2;
-	
+	public int exitY=4;
+	public int exitFloor; 
+	public int currentFloor;
+
 	private void paintCube(double[] p,double h,PaintEvent e){
         int[] f=new int[p.length];
         for(int k=0;k<f.length;f[k]=(int)Math.round(p[k]),k++);
@@ -56,7 +60,7 @@ public class Maze3dDisplayer extends MazeDisplayer {
 					   double w1=0.7*w +0.3*w*(i+1)/mazeData.length;
 					   double start=mx-w0*mazeData[i].length/2;
 					   double start1=mx-w1*mazeData[i].length/2;
-				      for(int j=0;j<mazeData[i].length;j++){
+				       for(int j=0;j<mazeData[i].length;j++){
 				          double []dpoints={start+j*w0,i*h,start+j*w0+w0,i*h,start1+j*w1+w1,i*h+h,start1+j*w1,i*h+h};
 				          double cheight=h/2;
 				          if(mazeData[i][j]!=0)
@@ -69,8 +73,20 @@ public class Maze3dDisplayer extends MazeDisplayer {
 							   e.gc.fillOval((int)Math.round(dpoints[0]+2), (int)Math.round(dpoints[1]-cheight/2+2), (int)Math.round((w0+w1)/2/1.5), (int)Math.round(h/1.5));
 							   e.gc.setBackground(new Color(null,0,0,0));
 				          }
+				          
+				          if(i==exitY && j==exitX && exitFloor == currentFloor){
+							   e.gc.setBackground(new Color(null,200,100,0));
+							   e.gc.fillOval((int)Math.round(dpoints[0]), (int)Math.round(dpoints[1]-cheight/2), (int)Math.round((w0+w1)/2), (int)Math.round(h));
+							   e.gc.setBackground(new Color(null,255,100,0));
+							   e.gc.fillOval((int)Math.round(dpoints[0]+2), (int)Math.round(dpoints[1]-cheight/2+2), (int)Math.round((w0+w1)/2/1.5), (int)Math.round(h/1.5));
+							   e.gc.setBackground(new Color(null,0,0,0));
+				          }
+				          
+				          
 				      }
+				      
 				   }
+				   
 				
 			}
 		});
@@ -198,7 +214,17 @@ public class Maze3dDisplayer extends MazeDisplayer {
 	public void setExitY(int exitY) {
 		this.exitY = exitY;
 	}
+	@Override
+	public void setExitFloor(int xPosition) {
+		this.exitFloor = xPosition;		
+	}
 
 	
+	public int getCurrentFloor() {
+		return currentFloor;
+	}
+	public void setCurrentFloor(int currentFloor) {
+		this.currentFloor = currentFloor;
+	}
 	
 }

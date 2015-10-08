@@ -49,6 +49,7 @@ public class MyModel extends Observable implements Model{
 	HashMap<Maze3d, Solution<Position>> solutionMap = new HashMap<Maze3d, Solution<Position>>();
 	HashMap<String, Thread> openThreads = new HashMap<String,Thread>();
 	Properties properties;
+	
 	//Constructors
 	/**
 	* Instantiates a new  my own model.
@@ -99,6 +100,15 @@ public class MyModel extends Observable implements Model{
 	* @param controller Controller represent the controller layer to work with
 	*/
 
+	public Properties getProperties() {
+		return properties;
+	}
+
+
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+	
 //Functionality
 	@Override
 	public void dir(String dir) throws NullPointerException
@@ -521,4 +531,26 @@ public class MyModel extends Observable implements Model{
 		notifyObservers();
 		return solutionMap.get(maze3dMap.get(mazeName));
 	}
+	
+	@Override
+	public boolean changePropertiesByFilename(String fileName) 
+	{	
+		Properties oldProperties = this.properties; 
+		
+		XMLDecoder decoder=null;
+		try {
+			decoder=new XMLDecoder(new BufferedInputStream(new FileInputStream(fileName)));
+		} catch (FileNotFoundException e) {
+			System.out.println("ERROR: File " + fileName + " was not found.");
+			return false; 
+		}
+		properties=(Properties)decoder.readObject();
+		setData(properties);
+		System.out.println(properties);
+		
+		
+		return true;
+	}
+	
+	
 }

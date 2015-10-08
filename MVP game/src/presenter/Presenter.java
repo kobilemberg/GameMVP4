@@ -307,6 +307,14 @@ public class Presenter implements Observer {
 			case 11:
 				model.exit();
 				break;
+				
+			case 12:
+				try{
+					model.changePropertiesByFilename(argArr[0]);					
+				}catch (Exception e) { view.errorNoticeToUser("Exception: Open Properties failed, problem with file " + argArr[0]);
+				break;
+				}
+				
 
 			default:
 				break;

@@ -26,21 +26,22 @@ public abstract class BasicWindow extends Observable implements Runnable,View {
 		initWidgets();
 		shell.open();
 		// main event loop
-		 while(!shell.isDisposed()){ // while window isn't closed
-
-		    // 1. read events, put then in a queue.
+		while(!shell.isDisposed()){ // while window isn't closed
+			// 1. read events, put then in a queue.
 		    // 2. dispatch the assigned listener
 		    if(!display.readAndDispatch()){ 	// if the queue is empty
 		       display.sleep(); 			// sleep until an event occurs 
 		    }
-
-		 } // shell is disposed
+		} // shell is disposed
+		exit();
+		display.dispose(); // dispose OS components
+	}
+	
+	public void exit(){
 		setUserCommand(11);
 		String[] args= {"Exit"};
 		System.out.println("Exiting now");
 		notifyObservers(args);
-		 display.dispose(); // dispose OS components
 	}
-	
 
 }

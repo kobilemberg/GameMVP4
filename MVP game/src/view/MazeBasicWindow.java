@@ -4,28 +4,27 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Text;
 
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import algorithms.search.State;
-
 import presenter.Command;
-import presenter.Controller;
 
 public class MazeBasicWindow extends BasicWindow{
 
@@ -38,7 +37,6 @@ public class MazeBasicWindow extends BasicWindow{
 	PrintWriter out=new PrintWriter(System.out);
 	int userCommand=0;
 	private CLI cli;
-	private Controller controller;
 	Maze3d mazeData;
 	int[][] crossedArr;
 	MazeDisplayer maze;
@@ -67,18 +65,16 @@ public class MazeBasicWindow extends BasicWindow{
 		
 	//	maze.redraw();
 		
-		
-		
 	}
 	
 	@Override
 	void initWidgets() {
 		
-		InitalMaze();
+		initMaze();
 		shell.setLayout(new GridLayout(2,false));
-		initialKeyListeners();
+		initKeyListeners();
 		Menu menuBar = new Menu(shell, SWT.BAR);
-        /* Main Bar Menu Items: File | Maze */
+        /* Main Bar Menu Items: File, Maze */
 		MenuItem cascadeFileMenu = new MenuItem(menuBar, SWT.CASCADE);
         cascadeFileMenu.setText("&File");
         MenuItem cascadeMazeMenu = new MenuItem(menuBar, SWT.CASCADE);
@@ -89,26 +85,66 @@ public class MazeBasicWindow extends BasicWindow{
         cascadeFileMenu.setMenu(fileMenu);
         MenuItem openProperties = new MenuItem(fileMenu, SWT.PUSH);
         openProperties.setText("Open Properties");
+        MenuItem GenerateItem = new MenuItem(fileMenu, SWT.PUSH);
+        GenerateItem.setText("Generate Maze");
         MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
         exitItem.setText("&Exit");
+        
         
         /* Generate Menu*/
         shell.setMenuBar(menuBar);
         
-		Button startButton=new Button(shell, SWT.PUSH);
+        /* UI Grid */ 
+        maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
+        
+        /* Buttons : Start, Stop */ 
+        Button startButton=new Button(shell, SWT.PUSH);
 		startButton.setText("Start");
 		startButton.setLayoutData(new GridData(SWT.FILL, SWT.None, false, false, 1, 1));
-		maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
+		
 		Button stopButton=new Button(shell, SWT.PUSH);
 		stopButton.setText("Stop");
 		stopButton.setLayoutData(new GridData(SWT.None, SWT.None, false, false, 1, 1));
 		stopButton.setEnabled(false);
 		
-		exitItem.addSelectionListener(new SelectionListener() {
+
+		/* What happens when a user clicks "File" > "Open Properties" */  
+		openProperties.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+				org.eclipse.swt.widgets.FileDialog fileDialog = new org.eclipse.swt.widgets.FileDialog(shell, SWT.OPEN);
+				fileDialog.setText("Open Properties");
+				fileDialog.setFilterPath("C:/");
+				String[] fileTypes = {"*.xml"}; 
+				fileDialog.setFilterExtensions(fileTypes);
+				String selectedFile = fileDialog.open();
+				String[] args = {selectedFile};
+				setUserCommand(12);
+				notifyObservers(args);
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		/* What happens when a user clicks "File" > "Generate Maze" */ 
+		GenerateItem.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				//TODO 
+				Dialog dialog = new Dialog(shell, SWT.CENTER) {
+					Text floors =new Text(shell, SWT.BORDER);
+					Text lines =new Text(shell, SWT.BORDER);
+					Text columns =new Text(shell, SWT.BORDER);
+					
+				};
+								
+				
 			}
 			
 			@Override
@@ -118,7 +154,22 @@ public class MazeBasicWindow extends BasicWindow{
 			}
 		});
 
-		
+		/* What happens when a user clicks "File" > "Exit" */ 
+		exitItem.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				display.dispose(); // dispose OS components
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+
+		/* What happens when a user clicks "[Start]". */ 
 		startButton.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -145,6 +196,7 @@ public class MazeBasicWindow extends BasicWindow{
 			public void widgetDefaultSelected(SelectionEvent arg0) {}
 		});
 		
+		/* What happens when a user clicks "[Stop]". */
 		stopButton.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -162,93 +214,80 @@ public class MazeBasicWindow extends BasicWindow{
 		
 	}
 	
-	public void initialKeyListeners()
-
+	public void initKeyListeners()
 	{
 		maze.addKeyListener(new KeyListener() 
 		{
-			boolean UpPresses=false;
-            boolean DownPresses=false;
-            boolean RightPresses=false;
-            boolean LeftPresses=false;
-            boolean PageDown = false;
+			boolean upKey=false;
+            boolean downKey=false;
+            boolean rightKey=false;
+            boolean leftKey=false;
+            boolean pageDownKey = false;
             boolean PageUp = false;
             
 			@Override
 			public void keyReleased(KeyEvent e) 
 			{
-					if(started == true)
+				if(started == true)
+				{
+					switch (e.keyCode) 
 					{
-						switch (e.keyCode) 
-						{
-			                  case SWT.ARROW_DOWN:
-			                  	maze.moveBackward();
-			                      DownPresses=false;
-			                       break;
-			                  case SWT.ARROW_UP:
-			                	  maze.moveForward();
-			                  //	setUserCommand(SWT.ARROW_UP);
-			                      UpPresses=false;
-			                      break;
-			                   case SWT.ARROW_LEFT:
-			                	   maze.moveLeft();
-			                  	 //setUserCommand(SWT.ARROW_LEFT);
-			                      LeftPresses=false;
-			                      break;
-			                  case SWT.ARROW_RIGHT:
-			                	  maze.moveRight();
-			                  //	setUserCommand(SWT.ARROW_RIGHT);
-			                      RightPresses=false;
-			                      break;
-			                      
-			                  case SWT.PAGE_DOWN:
-			                	 if(PageDown)
-			                	 {
-			                		 maze.moveDown();
-					                  //	setUserCommand(SWT.ARROW_RIGHT);
-					                	  PageDown=false;
-			                	 }
-			                		  
-			                      break;
-			                      
-			                  case SWT.PAGE_UP:
-			                	  if(PageUp)
-			                	  {
-			                		  maze.moveUp();
-					                  //	setUserCommand(SWT.ARROW_RIGHT);
-					                	  PageUp=false;
-			                	  }
-			                		  
-			                      break;
-			              }
-				     // setChanged();
-					//  notifyObservers();
-					}
-			        else
-	                {    
-			        	switch (e.keyCode) 
-	                    {
-	                         case SWT.ARROW_DOWN:
-	                             DownPresses=false;
-	                             break;
-	                         case SWT.ARROW_UP:
-	                              UpPresses=false;
-	                             break;
-	                         case SWT.ARROW_LEFT:
-	                             LeftPresses=false;
-	                              break;
-	                         case SWT.ARROW_RIGHT:
-	                             RightPresses=false;
-	                              break;
-	                         case SWT.PAGE_DOWN:
-			                	  PageDown=false;
-			                      break;
-			                  case SWT.PAGE_UP:
-			                	  PageUp=false;
-			                      break;
-	                    }
-	                 }
-				
+						case SWT.ARROW_DOWN:
+							maze.moveBackward();
+							downKey=false;
+							break;
+						case SWT.ARROW_UP:
+							maze.moveForward();
+							upKey=false;
+							break;
+						case SWT.ARROW_LEFT:
+							maze.moveLeft();
+							leftKey=false;
+							break;
+						case SWT.ARROW_RIGHT:
+							maze.moveRight();
+							rightKey=false;
+							break;
+						case SWT.PAGE_DOWN:
+							if(pageDownKey)
+							{
+								maze.moveDown();
+								pageDownKey=false;
+							}
+							break;
+						case SWT.PAGE_UP:
+							if(PageUp)
+							{
+								maze.moveUp();
+								PageUp=false;
+							}
+							break;
+		              }
+				}
+		        else
+                {    
+		        	switch (e.keyCode) 
+                    {
+                         case SWT.ARROW_DOWN:
+                             downKey=false;
+                             break;
+                         case SWT.ARROW_UP:
+                        	 upKey=false;
+                             break;
+                         case SWT.ARROW_LEFT:
+                             leftKey=false;
+                             break;
+                         case SWT.ARROW_RIGHT:
+                             rightKey=false;
+                              break;
+                         case SWT.PAGE_DOWN:
+                        	 pageDownKey=false;
+                        	 break;
+                         case SWT.PAGE_UP:
+                        	 PageUp=false;
+                        	 break;
+                    }
+                }
 			}
 		
 			@Override
@@ -256,44 +295,33 @@ public class MazeBasicWindow extends BasicWindow{
 			{
 				if(started)
 				{
-					System.out.println("keyListener");
 					switch (e.keyCode) 
-	                   {
-	                       case SWT.ARROW_DOWN:
-	                           DownPresses=true;
-	                           break;
-	                        case SWT.ARROW_UP:
-	                           UpPresses=true;
-	                           break;
-	                       case SWT.ARROW_LEFT:
-	                           LeftPresses=true;
-	                            break;
-	                       case SWT.ARROW_RIGHT:
-	                           RightPresses=true;
-	                           break;
-	                           
-	                           
-	                       case SWT.PAGE_DOWN:
-			                	  PageDown=getFloorUpCrossedArr("DOWN");
-			                      break;
-			                      
-			                  case SWT.PAGE_UP:
-			                	  PageUp=getFloorUpCrossedArr("UP");
-			                      break;
-	                   }
-				
+					{
+						case SWT.ARROW_DOWN:
+							downKey=true;
+							break;
+                        case SWT.ARROW_UP:
+                        	upKey=true;
+                        	break;
+                        case SWT.ARROW_LEFT:
+                        	leftKey=true;
+                        	break;
+                        case SWT.ARROW_RIGHT:
+                        	rightKey=true;
+                        	break;
+                        case SWT.PAGE_DOWN:
+                        	pageDownKey=getFloorUpCrossedArr("DOWN");
+                        	break;
+                        case SWT.PAGE_UP:
+                        	PageUp=getFloorUpCrossedArr("UP");
+                        	break;
+					}
 				}
 			}
-			
-			
-		
-			
 		});
-		
-
 	}
 	
-	private void InitalMaze() 
+	private void initMaze() 
 	{
 		maze=new Maze3dDisplayer(shell, SWT.BORDER);
 		
@@ -338,6 +366,11 @@ public class MazeBasicWindow extends BasicWindow{
 	
 	@Override
 	public void printMazeToUser(Maze3d mazeWithName,String name) {
+
+		this.maze.setExitX(mazeWithName.getGoalPosition().getYposition());
+		this.maze.setExitY(mazeWithName.getGoalPosition().getZposition());
+		this.maze.setExitFloor(mazeWithName.getGoalPosition().getXPosition()); 
+		
 		this.mazeData = mazeWithName;
 		this.crossedArr = this.mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
 		maze.mazeData = crossedArr;
@@ -348,9 +381,8 @@ public class MazeBasicWindow extends BasicWindow{
 	}
 	
 	
-	public boolean getFloorUpCrossedArr(String direction) {
-		
-		
+	public boolean getFloorUpCrossedArr(String direction) 
+	{
 		if(direction.toUpperCase().equals("UP"))
 		{
 			if(currentFloor>=0&&currentFloor<(this.mazeData.getMaze().length-1))
@@ -366,6 +398,7 @@ public class MazeBasicWindow extends BasicWindow{
 				{
 					this.crossedArr = crossedArrToCheck;
 					currentFloor++;
+					((Maze3dDisplayer) maze).setCurrentFloor(currentFloor);
 					maze.mazeData = crossedArr;
 					return true;
 				}
@@ -397,6 +430,7 @@ public class MazeBasicWindow extends BasicWindow{
 				{
 					this.crossedArr =crossedArrToCheck;
 					currentFloor--;
+					((Maze3dDisplayer) maze).setCurrentFloor(currentFloor);
 					maze.mazeData = crossedArr;
 					return true;
 				}
@@ -568,12 +602,6 @@ public class MazeBasicWindow extends BasicWindow{
 	 */
 	public void setOut(PrintWriter out) {
 		this.out = out;
-	}
-	/**
-	 * @return the controller
-	 */
-	public Controller getController() {
-		return controller;
 	}
 
 	@Override
