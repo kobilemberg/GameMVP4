@@ -10,10 +10,10 @@ import algorithms.mazeGenerators.Maze3d;
 
 public class Maze3dDisplayer extends MazeDisplayer {
 
-	public int characterX=0;
-	public int characterY=2;
-	public int exitX=0;
-	public int exitY=4;
+	public int characterX;
+	public int characterY;
+	public int exitX;
+	public int exitY;
 	public int exitFloor; 
 	public int currentFloor;
 
