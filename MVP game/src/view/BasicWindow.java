@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 
-public abstract class BasicWindow extends Observable implements Runnable,View {
+public abstract class BasicWindow extends Observable implements Runnable {
 	
 	Display display;
 	Shell shell;
@@ -34,14 +34,12 @@ public abstract class BasicWindow extends Observable implements Runnable,View {
 		    }
 		} // shell is disposed
 		exit();
-		display.dispose(); // dispose OS components
+		
 	}
 	
 	public void exit(){
-		setUserCommand(11);
-		String[] args= {"Exit"};
-		System.out.println("Exiting now");
-		notifyObservers(args);
+		display.dispose(); // dispose OS components
+		
 	}
 
 }

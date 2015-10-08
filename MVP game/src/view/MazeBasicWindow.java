@@ -26,7 +26,7 @@ import algorithms.search.Solution;
 import algorithms.search.State;
 import presenter.Command;
 
-public class MazeBasicWindow extends BasicWindow{
+public class MazeBasicWindow extends BasicWindow implements View{
 
 	Timer timer;
 	TimerTask task;
@@ -42,8 +42,24 @@ public class MazeBasicWindow extends BasicWindow{
 	MazeDisplayer maze;
 	boolean started =false;
 	int currentFloor;
+	boolean won=false; 
 	
-	
+	/**
+	 * @return the won
+	 */
+	public boolean isWon() {
+		return won;
+	}
+
+	/**
+	 * @param won the won to set
+	 */
+	public void setWon(boolean won) {
+		
+		
+		this.won = won;
+	}
+
 	public MazeBasicWindow(String title, int width, int height,HashMap<String, Command> viewCommandMap) {
 		super(title, width, height);
 		this.viewCommandMap = viewCommandMap;
@@ -284,6 +300,7 @@ public class MazeBasicWindow extends BasicWindow{
 	private void initMaze() 
 	{
 		maze=new Maze3dDisplayer(shell, SWT.BORDER);
+		((Maze3dDisplayer)maze).setMazeBasicWindow(this);
 		String[] mazeArgs =  {"test","default","2","10","18"};
 		this.viewCommandMap.get("generate 3d maze").doCommand(mazeArgs);
 	}
@@ -569,8 +586,15 @@ public class MazeBasicWindow extends BasicWindow{
 	}
 	
 	
-	
-	
+	@Override
+	public void exit(){
+		display.dispose(); // dispose OS components
+		setUserCommand(11);
+		String[] args= {"Exit"};
+		System.out.println("Exiting now");
+		notifyObservers(args);
+		
+	}
 	
 	
 
