@@ -6,11 +6,9 @@
   </void>
   <void property="defaultAlgorith">
    <string>MyMaze3dGenerator</string>
-  <!--SimpleMazeGenerator/MyMaze3dGenerator-->
   </void>
   <void property="defaultSolver">
    <string>BFS</string>
-   <!--BFS/A*-->
   </void>
   <void property="numOfThreads">
    <int>30</int>

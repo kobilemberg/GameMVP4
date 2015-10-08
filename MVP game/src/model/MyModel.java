@@ -8,7 +8,9 @@ package model;
  */
 
 import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,7 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
 import IO.MyCompressorOutputStream;
 import IO.MyDecompressorInputStream;
 import algorithms.demo.Demo;
@@ -532,11 +533,11 @@ public class MyModel extends Observable implements Model{
 		return solutionMap.get(maze3dMap.get(mazeName));
 	}
 	
+	@SuppressWarnings("resource")
 	@Override
 	public boolean changePropertiesByFilename(String fileName) 
-	{	
-		Properties oldProperties = this.properties; 
-		
+	{	 
+		//Reading the file.
 		XMLDecoder decoder=null;
 		try {
 			decoder=new XMLDecoder(new BufferedInputStream(new FileInputStream(fileName)));
@@ -544,11 +545,21 @@ public class MyModel extends Observable implements Model{
 			System.out.println("ERROR: File " + fileName + " was not found.");
 			return false; 
 		}
+		//Loading the file object
 		properties=(Properties)decoder.readObject();
 		setData(properties);
+		
 		System.out.println(properties);
-		
-		
+		//Saving the new file to the file root directory
+		XMLEncoder encoder=null;
+		try {
+			encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("External files/properties.xml")));
+		} catch (FileNotFoundException e) {
+			System.out.println("ERROR: Writing file External files/properties.xml failed.");
+			return false;
+		}
+		encoder.writeObject(properties);
+		encoder.close();
 		return true;
 	}
 	
