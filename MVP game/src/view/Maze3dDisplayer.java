@@ -3,6 +3,7 @@ package view;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
 import algorithms.mazeGenerators.Maze3d;
@@ -39,7 +40,9 @@ public class Maze3dDisplayer extends MazeDisplayer {
 		
 		final Color white=new Color(null, 255, 255, 255);
 		final Color black=new Color(null, 150,150,150);
-		setBackground(white);
+		Image bGImage = new Image(getDisplay(), "Resources/wood-floor-texture.jpg");
+		setBackgroundImage(bGImage);
+		//setBackground(white);
 		addPaintListener(new PaintListener() {
 			
 			@Override

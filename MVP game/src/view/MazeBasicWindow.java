@@ -218,10 +218,6 @@ public class MazeBasicWindow extends BasicWindow{
 	{
 		maze.addKeyListener(new KeyListener() 
 		{
-			boolean upKey=false;
-            boolean downKey=false;
-            boolean rightKey=false;
-            boolean leftKey=false;
             boolean pageDownKey = false;
             boolean PageUp = false;
             
@@ -232,21 +228,13 @@ public class MazeBasicWindow extends BasicWindow{
 				{
 					switch (e.keyCode) 
 					{
-						case SWT.ARROW_DOWN:
-							maze.moveBackward();
-							downKey=false;
+						case SWT.ARROW_DOWN:	maze.moveBackward();
 							break;
-						case SWT.ARROW_UP:
-							maze.moveForward();
-							upKey=false;
+						case SWT.ARROW_UP:		maze.moveForward();
 							break;
-						case SWT.ARROW_LEFT:
-							maze.moveLeft();
-							leftKey=false;
+						case SWT.ARROW_LEFT:	maze.moveLeft();
 							break;
-						case SWT.ARROW_RIGHT:
-							maze.moveRight();
-							rightKey=false;
+						case SWT.ARROW_RIGHT:	maze.moveRight();
 							break;
 						case SWT.PAGE_DOWN:
 							if(pageDownKey)
@@ -268,23 +256,9 @@ public class MazeBasicWindow extends BasicWindow{
                 {    
 		        	switch (e.keyCode) 
                     {
-                         case SWT.ARROW_DOWN:
-                             downKey=false;
-                             break;
-                         case SWT.ARROW_UP:
-                        	 upKey=false;
-                             break;
-                         case SWT.ARROW_LEFT:
-                             leftKey=false;
-                             break;
-                         case SWT.ARROW_RIGHT:
-                             rightKey=false;
-                              break;
-                         case SWT.PAGE_DOWN:
-                        	 pageDownKey=false;
+                         case SWT.PAGE_DOWN:	pageDownKey=false;
                         	 break;
-                         case SWT.PAGE_UP:
-                        	 PageUp=false;
+                         case SWT.PAGE_UP:		PageUp=false;
                         	 break;
                     }
                 }
@@ -297,23 +271,9 @@ public class MazeBasicWindow extends BasicWindow{
 				{
 					switch (e.keyCode) 
 					{
-						case SWT.ARROW_DOWN:
-							downKey=true;
-							break;
-                        case SWT.ARROW_UP:
-                        	upKey=true;
+                        case SWT.PAGE_DOWN:	pageDownKey=getFloorUpCrossedArr("DOWN");
                         	break;
-                        case SWT.ARROW_LEFT:
-                        	leftKey=true;
-                        	break;
-                        case SWT.ARROW_RIGHT:
-                        	rightKey=true;
-                        	break;
-                        case SWT.PAGE_DOWN:
-                        	pageDownKey=getFloorUpCrossedArr("DOWN");
-                        	break;
-                        case SWT.PAGE_UP:
-                        	PageUp=getFloorUpCrossedArr("UP");
+                        case SWT.PAGE_UP:	PageUp=getFloorUpCrossedArr("UP");
                         	break;
 					}
 				}
@@ -324,10 +284,8 @@ public class MazeBasicWindow extends BasicWindow{
 	private void initMaze() 
 	{
 		maze=new Maze3dDisplayer(shell, SWT.BORDER);
-		
 		String[] mazeArgs =  {"test","default","2","10","18"};
 		this.viewCommandMap.get("generate 3d maze").doCommand(mazeArgs);
-		
 	}
 
 //	public static void main(String[] args) {
