@@ -284,7 +284,7 @@ public class MazeBasicWindow extends BasicWindow{
 	private void initMaze() 
 	{
 		maze=new Maze3dDisplayer(shell, SWT.BORDER);
-		String[] mazeArgs =  {"test","default","2","4","10"};
+		String[] mazeArgs =  {"test","default","2","10","18"};
 		this.viewCommandMap.get("generate 3d maze").doCommand(mazeArgs);
 	}
 

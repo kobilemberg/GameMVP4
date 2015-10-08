@@ -80,7 +80,7 @@ public class Maze3dDisplayer extends MazeDisplayer {
 							   e.gc.setBackground(new Color(null,0,0,0));
 				          }
 				          
-				          if(i==exitY && j==exitX && exitFloor == currentFloor){
+				          if(i==exitX && j==exitY && exitFloor == currentFloor){
 							   e.gc.setBackground(new Color(null,200,100,0));
 							   e.gc.fillOval((int)Math.round(dpoints[0]), (int)Math.round(dpoints[1]-cheight/2), (int)Math.round((w0+w1)/2), (int)Math.round(h));
 							   e.gc.setBackground(new Color(null,255,100,0));
@@ -120,7 +120,7 @@ public class Maze3dDisplayer extends MazeDisplayer {
 	public void moveForward() {
 		int x=characterX;
 		int y=characterY;
-		y=y-1;
+		x=x-1;
 		moveCharacter(x, y);
 	}
 	/* (non-Javadoc)
@@ -130,7 +130,7 @@ public class Maze3dDisplayer extends MazeDisplayer {
 	public void moveBackward() {
 		int x=characterX;
 		int y=characterY;
-		y=y+1;
+		x=x+1;
 		moveCharacter(x, y);
 	}
 	/* (non-Javadoc)
@@ -140,7 +140,7 @@ public class Maze3dDisplayer extends MazeDisplayer {
 	public void moveLeft() {
 		int x=characterX;
 		int y=characterY;
-		x=x-1;
+		y=y-1;
 		moveCharacter(x, y);
 	}
 	/* (non-Javadoc)
@@ -150,7 +150,7 @@ public class Maze3dDisplayer extends MazeDisplayer {
 	public void moveRight() {
 		int x=characterX;
 		int y=characterY;
-		x=x+1;
+		y=y+1;
 		moveCharacter(x, y);
 	}
 	
