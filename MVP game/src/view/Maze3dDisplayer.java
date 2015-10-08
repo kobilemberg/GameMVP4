@@ -69,7 +69,10 @@ public class Maze3dDisplayer extends MazeDisplayer {
 				          if(mazeData[i][j]!=0)
 				        	  paintCube(dpoints, cheight,e);
 				          
-				          if(i==characterY && j==characterX){
+				          if(i==characterX && j==characterY){
+				        	  System.out.println("CharacterX: "+j);
+				        	  System.out.println("Charactery: "+i);
+				        	  System.out.println("Floor: "+currentFloor);
 							   e.gc.setBackground(new Color(null,200,0,0));
 							   e.gc.fillOval((int)Math.round(dpoints[0]), (int)Math.round(dpoints[1]-cheight/2), (int)Math.round((w0+w1)/2), (int)Math.round(h));
 							   e.gc.setBackground(new Color(null,255,0,0));
@@ -96,7 +99,7 @@ public class Maze3dDisplayer extends MazeDisplayer {
 	}
 	
 	private void moveCharacter(int x,int y){
-		if(x>=0 && x<mazeData[0].length && y>=0 && y<mazeData.length && mazeData[y][x]==0){
+		if(y>=0 && y<mazeData[0].length && x>=0 && x<mazeData.length && mazeData[x][y]==0){
 			System.out.println("Moving from: ("+characterX+","+characterY+") to: ("+x+","+y+")");
 			characterX=x;
 			characterY=y;
