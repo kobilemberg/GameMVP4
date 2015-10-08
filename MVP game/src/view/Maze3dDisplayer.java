@@ -165,9 +165,9 @@ public class Maze3dDisplayer extends MazeDisplayer {
 	
 	@Override
 	public void setCharacterPosition(int row, int col) {
-		characterX=col;
-		characterY=row;
-		moveCharacter(col,row);
+		characterX=row;
+		characterY=col;
+		moveCharacter(row,col);
 	}
 	/**
 	 * @return the characterX
