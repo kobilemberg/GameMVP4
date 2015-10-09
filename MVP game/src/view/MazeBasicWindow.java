@@ -30,7 +30,8 @@ public class MazeBasicWindow extends BasicWindow implements View{
 
 	Timer timer;
 	TimerTask task;
-	
+	Button startButton; 
+	Button stopButton; 
 	HashMap<String, Command> viewCommandMap;
 	private String cliMenu;
 	BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
@@ -114,16 +115,21 @@ public class MazeBasicWindow extends BasicWindow implements View{
         maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
         
         /* Buttons : Start, Stop */ 
-        Button startButton=new Button(shell, SWT.PUSH);
+/*        startButton=new Button(shell, SWT.PUSH);
 		startButton.setText("Start");
 		startButton.setLayoutData(new GridData(SWT.FILL, SWT.None, false, false, 1, 1));
 		
-		Button stopButton=new Button(shell, SWT.PUSH);
+		stopButton=new Button(shell, SWT.PUSH);
 		stopButton.setText("Stop");
 		stopButton.setLayoutData(new GridData(SWT.None, SWT.None, false, false, 1, 1));
 		stopButton.setEnabled(false);
-		
-
+		*/
+        
+        startButton=new Button(shell, SWT.PUSH);
+        stopButton=new Button(shell, SWT.PUSH);
+        changeButton(startButton, true, "Start");
+        stopButton.setText("Stop");
+        
 		/* What happens when a user clicks "File" > "Open Properties" */  
 		openProperties.addSelectionListener(new SelectionListener() {
 			
@@ -230,6 +236,49 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		
 	}
 	
+	public Button getStartButton() {
+		return startButton;
+	}
+
+	public void setStartButton(Button startButton) {
+		this.startButton = startButton;
+		
+	}
+
+	public boolean changeButton(Button b, boolean enabled, String text) {
+		if(b == startButton) {
+			/* Buttons : Start, Stop */ 
+			startButton.setText(text);
+			startButton.setLayoutData(new GridData(SWT.FILL, SWT.None, false, false, 1, 1));
+			startButton.setEnabled(enabled);
+			stopButton.setEnabled(!(enabled));
+			stopButton.setLayoutData(new GridData(SWT.None, SWT.None, false, false, 1, 1));
+
+		}
+		else if (b == stopButton)
+		{
+			stopButton.setText(text);
+			stopButton.setLayoutData(new GridData(SWT.None, SWT.None, false, false, 1, 1));
+			stopButton.setEnabled(enabled);
+			startButton.setEnabled(!(enabled));
+			startButton.setLayoutData(new GridData(SWT.FILL, SWT.None, false, false, 1, 1));
+
+		}
+		else
+		{
+			return false; 
+		}
+		return true; 
+	}
+	
+	public Button getStopButton() {
+		return stopButton;
+	}
+
+	public void setStopButton(Button stopButton) {
+		this.stopButton = stopButton;
+	}
+
 	public void initKeyListeners()
 	{
 		maze.addKeyListener(new KeyListener() 
