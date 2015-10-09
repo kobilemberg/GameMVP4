@@ -1,5 +1,6 @@
 package view;
 
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -12,9 +13,11 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -44,7 +47,8 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	boolean started =false;
 	int currentFloor;
 	boolean won=false; 
-	
+	String game; 
+	WelcomeDisplayer welcomeDisplayer; 
 	/**
 	 * @return the won
 	 */
@@ -86,17 +90,31 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	@Override
 	void initWidgets() {
+		game = "game";
+		if (game.equals("maze"))
+		{
+			initMaze();	
+			initKeyListeners();
+			/* UI Grid */ 
+
+		}
+		else
+		{
+			initGame(); 
+		}
 		
-		initMaze();
 		shell.setLayout(new GridLayout(2,false));
-		initKeyListeners();
+		
 		Menu menuBar = new Menu(shell, SWT.BAR);
         /* Main Bar Menu Items: File, Maze */
 		MenuItem cascadeFileMenu = new MenuItem(menuBar, SWT.CASCADE);
         cascadeFileMenu.setText("&File");
         MenuItem cascadeMazeMenu = new MenuItem(menuBar, SWT.CASCADE);
         cascadeMazeMenu.setText("Maze");
-
+        
+        
+        
+        //shell.setMinimumSize(menuBar.get, height);
         /* File Menu Items: Open Properties, Exit */  
         Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
         cascadeFileMenu.setMenu(fileMenu);
@@ -111,19 +129,6 @@ public class MazeBasicWindow extends BasicWindow implements View{
         /* Generate Menu*/
         shell.setMenuBar(menuBar);
         
-        /* UI Grid */ 
-        maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
-        
-        /* Buttons : Start, Stop */ 
-/*        startButton=new Button(shell, SWT.PUSH);
-		startButton.setText("Start");
-		startButton.setLayoutData(new GridData(SWT.FILL, SWT.None, false, false, 1, 1));
-		
-		stopButton=new Button(shell, SWT.PUSH);
-		stopButton.setText("Stop");
-		stopButton.setLayoutData(new GridData(SWT.None, SWT.None, false, false, 1, 1));
-		stopButton.setEnabled(false);
-		*/
         
         startButton=new Button(shell, SWT.PUSH);
         stopButton=new Button(shell, SWT.PUSH);
@@ -212,6 +217,31 @@ public class MazeBasicWindow extends BasicWindow implements View{
 				timer.scheduleAtFixedRate(task, 0, 100);				
 				startButton.setEnabled(false);
 				stopButton.setEnabled(true);
+				
+				game = "maze";
+				if (game.equals("maze"))
+				{
+					
+					//welcomeDisplayer.setVisible(false);
+					initMaze();	
+					initKeyListeners();
+					//maze.redraw();
+					shell.redraw();
+					shell.forceActive();
+					shell.forceFocus();
+					maze.redraw();
+					maze.forceFocus();
+					display.readAndDispatch();
+					/* UI Grid */ 
+					welcomeDisplayer.dispose();
+					shell.setText("MazeGame");
+				}
+				else
+				{
+					initGame(); 
+				}
+				
+				
 			}
 			
 			@Override
@@ -235,7 +265,8 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		});
 		
 	}
-	
+
+
 	public Button getStartButton() {
 		return startButton;
 	}
@@ -352,6 +383,15 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		((Maze3dDisplayer)maze).setMazeBasicWindow(this);
 		String[] mazeArgs =  {"test","default","2","10","18"};
 		this.viewCommandMap.get("generate 3d maze").doCommand(mazeArgs);
+		
+        maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
+
+	}
+	
+	private void initGame()
+	{
+		welcomeDisplayer = new  WelcomeDisplayer(shell, SWT.BORDER);
+		welcomeDisplayer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
 	}
 
 //	public static void main(String[] args) {
