@@ -40,85 +40,75 @@ public class Maze3dDisplayer extends MazeDisplayer {
 		super(parent, style);
 		
 		final Color white=new Color(null, 255, 255, 255);
-		final Color black=new Color(null, 150,150,150);
+		final Color black=new Color(null, 0,0,0);
 		Image bGImage = new Image(getDisplay(), "Resources/wood-floor-texture.jpg");
 		setBackgroundImage(bGImage);
 		//setBackground(white);
 		addPaintListener(new PaintListener() {
 			
 			@Override
-			public void paintControl(PaintEvent e) {
-				   e.gc.setForeground(new Color(null,0,255,0));
-				   e.gc.setBackground(new Color(null,255,0,0));
+			synchronized public void paintControl(PaintEvent e) {
+			   e.gc.setForeground(new Color(null,0,0,0));
+			   e.gc.setBackground(new Color(null,0,0,0));
 
-				   int width=getSize().x;
-				   int height=getSize().y;
-				   
-				   int mx=width/2;
+			   int width=getSize().x;
+			   int height=getSize().y;
+			   
+			   int mx=width/2;
 
-				   double w=(double)width/mazeData[0].length;
-				   double h=(double)height/mazeData.length;
+			   double w=(double)width/mazeData[0].length;
+			   double h=(double)height/mazeData.length;
 
-				   for(int i=0;i<mazeData.length;i++){
-					   double w0=0.7*w +0.3*w*i/mazeData.length;
-					   double w1=0.7*w +0.3*w*(i+1)/mazeData.length;
-					   double start=mx-w0*mazeData[i].length/2;
-					   double start1=mx-w1*mazeData[i].length/2;
-				       for(int j=0;j<mazeData[i].length;j++){
-				          double []dpoints={start+j*w0,i*h,start+j*w0+w0,i*h,start1+j*w1+w1,i*h+h,start1+j*w1,i*h+h};
-				          double cheight=h/2;
-				          if(mazeData[i][j]!=0)
-				        	  paintCube(dpoints, cheight,e);
-				          
-				          
-				          if(i==characterX && j==characterY && exitX==characterX &&exitY ==characterY&& exitFloor == currentFloor)
-				          {
-				        	  /* Draw Exit & Character at the same place. */ 
-				        	  e.gc.setBackground(new Color(null,200,100,0));
-				        	  e.gc.fillOval((int)Math.round(dpoints[0]), (int)Math.round(dpoints[1]-cheight/2), (int)Math.round((w0+w1)/2), (int)Math.round(h));
+			   for(int i=0;i<mazeData.length;i++){
+				   double w0=0.7*w +0.3*w*i/mazeData.length;
+				   double w1=0.7*w +0.3*w*(i+1)/mazeData.length;
+				   double start=mx-w0*mazeData[i].length/2;
+				   double start1=mx-w1*mazeData[i].length/2;
+			       for(int j=0;j<mazeData[i].length;j++){
+			          double []dpoints={start+j*w0,i*h,start+j*w0+w0,i*h,start1+j*w1+w1,i*h+h,start1+j*w1,i*h+h};
+			          double cheight=h/2;
+			          if(mazeData[i][j]!=0)
+			        	  paintCube(dpoints, cheight,e);
+			          
+			          
+			          if(i==characterX && j==characterY && exitX==characterX &&exitY ==characterY&& exitFloor == currentFloor)
+			          {
+			        	  /* Draw Exit & Character at the same place. */ 
+			        	  e.gc.setBackground(new Color(null,200,100,0));
+			        	  e.gc.fillOval((int)Math.round(dpoints[0]), (int)Math.round(dpoints[1]-cheight/2), (int)Math.round((w0+w1)/2), (int)Math.round(h));
+			        	  e.gc.setBackground(new Color(null,0,255,255));
+			        	  e.gc.fillOval((int)Math.round(dpoints[0]+2), (int)Math.round(dpoints[1]-cheight/2+2), (int)Math.round((w0+w1)/2/1.5), (int)Math.round(h/1.5));
+			        	  e.gc.setBackground(new Color(null,0,0,0));
+			          }
+			          else
+			          {
+			        	  /* Draw character */ 
+			        	  if(i==characterX && j==characterY){
+				        	  System.out.println("CharacterX: "+j);
+				        	  System.out.println("Charactery: "+i);
+				        	  System.out.println("Floor: "+currentFloor);
+							   e.gc.setBackground(new Color(null,200,0,0));
+							   e.gc.fillOval((int)Math.round(dpoints[0]), (int)Math.round(dpoints[1]-cheight/2), (int)Math.round((w0+w1)/2), (int)Math.round(h));
+							   e.gc.setBackground(new Color(null,255,0,0));
+							   e.gc.fillOval((int)Math.round(dpoints[0]+2), (int)Math.round(dpoints[1]-cheight/2+2), (int)Math.round((w0+w1)/2/1.5), (int)Math.round(h/1.5));
+							   e.gc.setBackground(new Color(null,0,0,0));
+				          }
+				          /* Draw Exit */ 
+				          if(i==exitX && j==exitY && exitFloor == currentFloor){
+				        	  Image exitImage = new Image(getDisplay(), "Resources/exit.png");
+				        	  //e.gc.drawImage(exitImage, (int)Math.round(dpoints[0]), (int)Math.round(dpoints[1]-cheight/2));
+				        	  
+				        	  mazeBasicWindow.setWon(true);
 				        	  e.gc.setBackground(new Color(null,0,255,255));
-				        	  e.gc.fillOval((int)Math.round(dpoints[0]+2), (int)Math.round(dpoints[1]-cheight/2+2), (int)Math.round((w0+w1)/2/1.5), (int)Math.round(h/1.5));
-				        	  e.gc.setBackground(new Color(null,255,0,0));
+				        	  e.gc.setForeground(black);
+				        	  e.gc.fillRectangle((int)Math.round(dpoints[0]), (int)Math.round(dpoints[1]-cheight/2), (int)Math.round((w0+w1)/2), (int)Math.round(h));
+				        	  e.gc.setBackground(new Color(null,0,100,200));
+				        	  e.gc.fillRectangle((int)Math.round(dpoints[0]+2), (int)Math.round(dpoints[1]-cheight/2+2), (int)Math.round((w0+w1)/2/1.5), (int)Math.round(h/1.5));
+				        	  e.gc.setBackground(new Color(null,0,0,0));
 				          }
-				          else
-				          {
-				        	  /* Draw character */ 
-				        	  if(i==characterX && j==characterY){
-					        	  System.out.println("CharacterX: "+j);
-					        	  System.out.println("Charactery: "+i);
-					        	  System.out.println("Floor: "+currentFloor);
-								   e.gc.setBackground(new Color(null,200,0,0));
-								   e.gc.fillOval((int)Math.round(dpoints[0]), (int)Math.round(dpoints[1]-cheight/2), (int)Math.round((w0+w1)/2), (int)Math.round(h));
-								   e.gc.setBackground(new Color(null,255,0,0));
-								   e.gc.fillOval((int)Math.round(dpoints[0]+2), (int)Math.round(dpoints[1]-cheight/2+2), (int)Math.round((w0+w1)/2/1.5), (int)Math.round(h/1.5));
-								   e.gc.setBackground(new Color(null,255,0,0));
-					          }
-					          /* Draw Exit */ 
-					          if(i==exitX && j==exitY && exitFloor == currentFloor){
-					        	  Image exitImage = new Image(getDisplay(), "Resources/exit.png");
-					        	  //e.gc.drawImage(exitImage, (int)Math.round(dpoints[0]), (int)Math.round(dpoints[1]-cheight/2));
-					        	  
-					        	  mazeBasicWindow.setWon(true);
-					        	  e.gc.setBackground(new Color(null,0,255,255));
-					        	  e.gc.setForeground(black);
-					        	  e.gc.fillRectangle((int)Math.round(dpoints[0]), (int)Math.round(dpoints[1]-cheight/2), (int)Math.round((w0+w1)/2), (int)Math.round(h));
-					        	  e.gc.setBackground(new Color(null,0,100,200));
-					        	  e.gc.fillRectangle((int)Math.round(dpoints[0]+2), (int)Math.round(dpoints[1]-cheight/2+2), (int)Math.round((w0+w1)/2/1.5), (int)Math.round(h/1.5));
-					        	  e.gc.setBackground(new Color(null,255,0,0));
-					          }
-					          
-					          
-					          
-				          }
-				          
-				          
-				          
-				          
-				      }
-				      
-				   }
-				   
-				
+			          }
+			       }
+			   }
 			}
 		});
 	}

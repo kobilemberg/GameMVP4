@@ -1,6 +1,5 @@
 package view;
 
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -9,6 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -18,9 +18,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 import algorithms.mazeGenerators.Maze3d;
@@ -39,82 +43,37 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	private String cliMenu;
 	BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
 	PrintWriter out=new PrintWriter(System.out);
-	int userCommand=0;
 	private CLI cli;
 	Maze3d mazeData;
+	int userCommand=0;
 	int[][] crossedArr;
+	int currentFloor;
 	MazeDisplayer maze;
 	boolean started =false;
-	int currentFloor;
-	boolean won=false; 
+	boolean won=false;
 	String game; 
-	WelcomeDisplayer welcomeDisplayer; 
-	/**
-	 * @return the won
-	 */
-	public boolean isWon() {
-		return won;
-	}
-
-	/**
-	 * @param won the won to set
-	 */
-	public void setWon(boolean won) {
-		
-		
-		this.won = won;
-	}
+	WelcomeDisplayer welcomeDisplayer;
 
 	public MazeBasicWindow(String title, int width, int height,HashMap<String, Command> viewCommandMap) {
 		super(title, width, height);
 		this.viewCommandMap = viewCommandMap;
 	}
 
-	private void randomWalk(MazeDisplayer maze){
-	//	Random r=new Random();
-	//	boolean b1,b2;
-	//	b1=r.nextBoolean();
-	//	b2=r.nextBoolean();
-	//	if(b1&&b2)
-	//		maze.moveUp();
-	//	if(b1&&!b2)
-	//		maze.moveDown();
-	//	if(!b1&&b2)
-	//		maze.moveRight();
-	//	if(!b1&&!b2)
-	//		maze.moveLeft();
-		
-	//	maze.redraw();
-		
-	}
-	
 	@Override
 	void initWidgets() {
-		game = "game";
-		if (game.equals("maze"))
-		{
-			initMaze();	
-			initKeyListeners();
-			/* UI Grid */ 
 
-		}
-		else
-		{
-			initGame(); 
-		}
 		
-		shell.setLayout(new GridLayout(2,false));
+		GridLayout grid = new GridLayout(2,false); 
+		shell.setLayout(grid);
+        //shell.setMinimumSize(menuBar.get, height);
 		
-		Menu menuBar = new Menu(shell, SWT.BAR);
         /* Main Bar Menu Items: File, Maze */
+		Menu menuBar = new Menu(shell, SWT.BAR);
 		MenuItem cascadeFileMenu = new MenuItem(menuBar, SWT.CASCADE);
         cascadeFileMenu.setText("&File");
         MenuItem cascadeMazeMenu = new MenuItem(menuBar, SWT.CASCADE);
         cascadeMazeMenu.setText("Maze");
         
-        
-        
-        //shell.setMinimumSize(menuBar.get, height);
         /* File Menu Items: Open Properties, Exit */  
         Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
         cascadeFileMenu.setMenu(fileMenu);
@@ -124,17 +83,43 @@ public class MazeBasicWindow extends BasicWindow implements View{
         GenerateItem.setText("Generate Maze");
         MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
         exitItem.setText("&Exit");
+        shell.setMenuBar(menuBar); // Generate Menu.
         
+        TabFolder MazeFolder = new TabFolder(shell, SWT.NULL);
+
+        TabItem playTab = new TabItem(MazeFolder, SWT.NULL);
+        playTab.setText("Maze");
+        SashForm playForm = new SashForm(MazeFolder, SWT.VERTICAL);
+        playTab.setControl(playForm);
         
-        /* Generate Menu*/
-        shell.setMenuBar(menuBar);
+        Button generateNewMazeButton = new Button(playForm, SWT.PUSH);
+        generateNewMazeButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+        generateNewMazeButton.setText("Generate");
         
+        Button solveButton = new Button(playForm, SWT.PUSH);
+        solveButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+        solveButton.setText("Solve");
         
-        startButton=new Button(shell, SWT.PUSH);
-        stopButton=new Button(shell, SWT.PUSH);
+        Button hintButton = new Button(playForm, SWT.PUSH);
+        hintButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+        hintButton.setText("Hint");
+
+        /* Options form */ 
+        TabItem optionsTab = new TabItem(MazeFolder, SWT.NULL);
+        optionsTab.setText("Options");
+        SashForm optionsForm = new SashForm(MazeFolder, SWT.VERTICAL);
+        optionsTab.setControl(optionsForm);
+        optionsForm.setSize(10, 100);
+
+        startButton=new Button(optionsForm, SWT.PUSH);
+        stopButton=new Button(optionsForm, SWT.PUSH);
         changeButton(startButton, true, "Start");
         stopButton.setText("Stop");
         
+        Button testButton = new Button(optionsForm, SWT.PUSH);
+        testButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+        testButton.setText("Hint");
+
 		/* What happens when a user clicks "File" > "Open Properties" */  
 		openProperties.addSelectionListener(new SelectionListener() {
 			
@@ -201,7 +186,8 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				timer=new Timer();
+				started=true;
+				/*timer=new Timer();
 				task=new TimerTask() {
 					@Override
 					public void run() {
@@ -209,39 +195,29 @@ public class MazeBasicWindow extends BasicWindow implements View{
 							@Override
 							public void run() {
 								//randomWalk(maze);
-								started=true;
+								
 							}
 						});
 					}
 				};				
-				timer.scheduleAtFixedRate(task, 0, 100);				
-				startButton.setEnabled(false);
-				stopButton.setEnabled(true);
-				
+				timer.scheduleAtFixedRate(task, 0, 100);	
+*/
 				game = "maze";
 				if (game.equals("maze"))
 				{
-					
-					//welcomeDisplayer.setVisible(false);
 					initMaze();	
 					initKeyListeners();
-					//maze.redraw();
-					shell.redraw();
-					shell.forceActive();
-					shell.forceFocus();
-					maze.redraw();
-					maze.forceFocus();
-					display.readAndDispatch();
 					/* UI Grid */ 
-					welcomeDisplayer.dispose();
-					shell.setText("MazeGame");
+
 				}
 				else
 				{
 					initGame(); 
 				}
-				
-				
+
+				startButton.setEnabled(false);
+				stopButton.setEnabled(true);
+				shell.layout();
 			}
 			
 			@Override
@@ -253,8 +229,6 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				task.cancel();
-				timer.cancel();
 				startButton.setEnabled(true);
 				stopButton.setEnabled(false);
 				started=false;
@@ -379,12 +353,15 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	private void initMaze() 
 	{
-		maze=new Maze3dDisplayer(shell, SWT.BORDER);
-		((Maze3dDisplayer)maze).setMazeBasicWindow(this);
 		String[] mazeArgs =  {"test","default","2","10","18"};
 		this.viewCommandMap.get("generate 3d maze").doCommand(mazeArgs);
 		
-        maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
+		maze=new Maze3dDisplayer(shell, SWT.BORDER);
+        maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
+        //maze.setLayoutData(new GridData(horizontalAlignment, verticalAlignment, grabExcessHorizontalSpace, grabExcessVerticalSpace, horizontalSpan, verticalSpan));
+		((Maze3dDisplayer)maze).setMazeBasicWindow(this);
+		
+		
 
 	}
 	
@@ -430,14 +407,13 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	@Override
 	public void printMazeToUser(Maze3d mazeWithName,String name) {
-
+		this.mazeData = mazeWithName;
+		this.crossedArr = this.mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
+		maze.mazeData = crossedArr;
 		this.maze.setExitX(mazeWithName.getGoalPosition().getYposition());
 		this.maze.setExitY(mazeWithName.getGoalPosition().getZposition());
 		this.maze.setExitFloor(mazeWithName.getGoalPosition().getXPosition()); 
 		
-		this.mazeData = mazeWithName;
-		this.crossedArr = this.mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
-		maze.mazeData = crossedArr;
 		maze.setCharacterPosition(mazeWithName.getStartPosition().getYposition(), mazeWithName.getStartPosition().getZposition());
 		this.currentFloor = mazeData.getStartPosition().getXPosition();
 		out.println("Maze: "+name+"\n"+mazeWithName.toString());
@@ -514,10 +490,6 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		System.out.println("No change");
 		return false;
 	}
-	
-	
-	
-	
 	
 	@Override
 	public void printToUserCrossedArray(int[][] crossedArr, String axe, String index, String name) {
@@ -667,6 +639,22 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	public void setOut(PrintWriter out) {
 		this.out = out;
 	}
+	
+	/**
+	 * @return the won
+	 */
+	public boolean isWon() {
+		return won;
+	}
+
+	/**
+	 * @param won the won to set
+	 */
+	public void setWon(boolean won) {
+		
+		
+		this.won = won;
+	}
 
 	@Override
 	public void start() {
@@ -677,6 +665,16 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	@Override
 	public void exit(){
+		if (started)
+		{
+			if (task != null && timer != null)
+			{
+				task.cancel();
+				timer.cancel();
+			}
+						
+		}
+		
 		display.dispose(); // dispose OS components
 		setUserCommand(11);
 		String[] args= {"Exit"};
@@ -687,4 +685,21 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	
 
+	private void randomWalk(MazeDisplayer maze){
+	//	Random r=new Random();
+	//	boolean b1,b2;
+	//	b1=r.nextBoolean();
+	//	b2=r.nextBoolean();
+	//	if(b1&&b2)
+	//		maze.moveUp();
+	//	if(b1&&!b2)
+	//		maze.moveDown();
+	//	if(!b1&&b2)
+	//		maze.moveRight();
+	//	if(!b1&&!b2)
+	//		maze.moveLeft();
+		
+	//	maze.redraw();
+		
+	}
 }

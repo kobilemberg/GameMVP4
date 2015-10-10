@@ -257,7 +257,7 @@ public class Presenter implements Observer {
 				try {model.generateMazeWithName(argArr[0], argArr[1],  argArr[2],  argArr[3],  argArr[4]);}
 				catch (Exception e) {
 					e.printStackTrace();
-					view.errorNoticeToUser("Exception: Wrong parameters, Usage:generate 3d maze <name> <generator> <other params>");
+					view.errorNoticeToUser("Exception: Wrong parameters, Usage:generate 3d maze <name> <algorythm> <other params>");
 				}
 				break;
 
