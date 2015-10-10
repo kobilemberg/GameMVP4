@@ -66,7 +66,9 @@ public class Presenter implements Observer {
 					try {
 						view.setUserCommand(3);
 						((Observable)view).notifyObservers(args);
-					} catch (NullPointerException e) {view.errorNoticeToUser("Exception: there is no maze named "+args[0]);}
+					} catch (NullPointerException e) {
+						e.printStackTrace();
+						view.errorNoticeToUser("Exception: there is no maze named "+args[0]);}
 				}
 			});
 			
@@ -242,7 +244,7 @@ public class Presenter implements Observer {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void update(Observable o, Object args) {
+	synchronized public void update(Observable o, Object args) {
 		if(o==view)
 		{
 			String[] argArr = ((String[])args).clone();
@@ -254,7 +256,13 @@ public class Presenter implements Observer {
 				break;
 			
 			case 2:
-				try {model.generateMazeWithName(argArr[0], argArr[1],  argArr[2],  argArr[3],  argArr[4]);}
+				try {
+					
+					
+					synchronized (model) {
+						model.generateMazeWithName(argArr[0], argArr[1],  argArr[2],  argArr[3],  argArr[4]);}
+					}
+					
 				catch (Exception e) {
 					e.printStackTrace();
 					view.errorNoticeToUser("Exception: Wrong parameters, Usage:generate 3d maze <name> <algorythm> <other params>");

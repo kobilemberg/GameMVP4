@@ -357,6 +357,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		this.viewCommandMap.get("generate 3d maze").doCommand(mazeArgs);
 		
 		maze=new Maze3dDisplayer(shell, SWT.BORDER);
+
         maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
         //maze.setLayoutData(new GridData(horizontalAlignment, verticalAlignment, grabExcessHorizontalSpace, grabExcessVerticalSpace, horizontalSpan, verticalSpan));
 		((Maze3dDisplayer)maze).setMazeBasicWindow(this);
@@ -399,15 +400,20 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	@Override
 	public void tellTheUserMazeIsReady(String name) {
-		String[] mazeName={"test"};
+		String[] mazeName={name,};
 		out.println("View: Maze "+name+" is Ready, you can take it!");
 		out.flush();
+		
 		this.viewCommandMap.get("display").doCommand(mazeName);
+		//this.notifyObservers();
 	}
 	
 	@Override
 	public void printMazeToUser(Maze3d mazeWithName,String name) {
+
+		System.out.println("MazeWithName: "+mazeWithName);
 		this.mazeData = mazeWithName;
+		System.out.println("mazeWithName: "+mazeWithName);
 		this.crossedArr = this.mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
 		maze.mazeData = crossedArr;
 		this.maze.setExitX(mazeWithName.getGoalPosition().getYposition());
@@ -418,6 +424,12 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		this.currentFloor = mazeData.getStartPosition().getXPosition();
 		out.println("Maze: "+name+"\n"+mazeWithName.toString());
 		out.flush();
+		welcomeDisplayer.dispose();
+		System.out.println("Test");
+		maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
+		//maze.handle;
+		shell.layout();
+		shell.pack();
 	}
 	
 	
