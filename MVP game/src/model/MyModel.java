@@ -72,16 +72,16 @@ public class MyModel extends Observable implements Model{
 				mapLoader.close();
 				this.properties = read("External files/Properties.xml");
 			} 
-			catch (FileNotFoundException e) {errorNoticeToControlelr("Problam with solution map file");} 
+			catch (FileNotFoundException e) {errorNoticeToController("Problam with solution map file");} 
 			catch (IOException e) 
 			{
-				errorNoticeToControlelr("Problam with solution map file(IO)");
+				errorNoticeToController("Problam with solution map file(IO)");
 				e.printStackTrace();
 			} 
-			catch (ClassNotFoundException e) {errorNoticeToControlelr("problam with class");} 
+			catch (ClassNotFoundException e) {errorNoticeToController("problam with class");} 
 			catch (Exception e) 
 			{
-				errorNoticeToControlelr("Problem with xml");
+				errorNoticeToController("Problem with xml");
 				e.printStackTrace();
 			}
 		}
@@ -101,14 +101,10 @@ public class MyModel extends Observable implements Model{
 	* @param controller Controller represent the controller layer to work with
 	*/
 
-	public Properties getProperties() {
-		return properties;
-	}
+	public Properties getProperties() {return properties;}
 
 
-	public void setProperties(Properties properties) {
-		this.properties = properties;
-	}
+	public void setProperties(Properties properties) {this.properties = properties;}
 	
 //Functionality
 	@Override
@@ -128,16 +124,14 @@ public class MyModel extends Observable implements Model{
 					notifyObservers();
 				}
 			}
-			else
-				errorNoticeToControlelr("Illegal path");
+			else{errorNoticeToController("Illegal path");}
 		}
-		else
-			errorNoticeToControlelr("Illegal path");
+		else{errorNoticeToController("Illegal path");}
 	}
 
 	@Override
 	public synchronized void generateMazeWithName(String name, String generator, String floors, String lines, String columns) {
-		if(floors.isEmpty()||lines.isEmpty()||columns.isEmpty()){errorNoticeToControlelr("Wrong parameters, Usage: generate 3d maze <name> <generator> <other params>");}
+		if(floors.isEmpty()||lines.isEmpty()||columns.isEmpty()){errorNoticeToController("Wrong parameters, Usage: generate 3d maze <name> <generator> <other params>");}
 		Callable<Maze3d> generateMazeThread = new Callable<Maze3d>() 
 		{
 			@Override
@@ -147,28 +141,28 @@ public class MyModel extends Observable implements Model{
 				if(generator.equals("mymaze3dgenerator"))
 				{
 					maze = new MyMaze3dGenerator();
-					errorNoticeToControlelr("Generating maze with MyMaze3dGenerator as your request.");
+					errorNoticeToController("Generating maze with MyMaze3dGenerator as your request.");
 				}
 				
 				else if(generator.equals("simplemazegenerator"))
 				{
 					maze = new SimpleMaze3dGenerator();
-					errorNoticeToControlelr("Generating maze with simplemazegenerator as your request.");
+					errorNoticeToController("Generating maze with simplemazegenerator as your request.");
 				}
 					
 				else if(properties.getDefaultAlgorith().equals("SimpleMazeGenerator"))
 				{
-					errorNoticeToControlelr("Generating maze with SimpleMaze3dGenerator as your properties file.");
+					errorNoticeToController("Generating maze with SimpleMaze3dGenerator as your properties file.");
 					maze = new SimpleMaze3dGenerator();
 				}
 				else if(properties.getDefaultAlgorith().equals("MyMaze3dGenerator"))
 				{
-					errorNoticeToControlelr("Generating maze with MyMaze3dGenerator as your properties file.");
+					errorNoticeToController("Generating maze with MyMaze3dGenerator as your properties file.");
 					maze = new MyMaze3dGenerator();
 				}
 				else
 				{
-					errorNoticeToControlelr("Generating maze with MyMaze3dGenerator because there were no configurations.");
+					errorNoticeToController("Generating maze with MyMaze3dGenerator because there were no configurations.");
 					maze = new MyMaze3dGenerator();
 				}
 				if(!floors.isEmpty()&&!lines.isEmpty()&&!columns.isEmpty())
@@ -180,7 +174,7 @@ public class MyModel extends Observable implements Model{
 				}
 				else
 				{	
-					errorNoticeToControlelr("Wrong parameters, Usage: generate 3d maze <name> <generator> <other params>");
+					errorNoticeToController("Wrong parameters, Usage: generate 3d maze <name> <generator> <other params>");
 					return null;
 				}
 			}
@@ -221,23 +215,23 @@ public class MyModel extends Observable implements Model{
 			if(axe.equals("x"))
 			{
 				if((new Integer(index)) >=0 && (new Integer(index)) < maze.getMaze().length){arrToRet = maze.getCrossSectionByX(new Integer(index));}
-				else{errorNoticeToControlelr("illegal index, llegal indexes are:0-"+maze.getMaze().length);}
+				else{errorNoticeToController("illegal index, llegal indexes are:0-"+maze.getMaze().length);}
 			}
 			//Lines
 			else if(axe.equals("y"))
 			{
 				if((new Integer(index)) >=0 && (new Integer(index)) < maze.getMaze()[0].length){arrToRet = maze.getCrossSectionByY(new Integer(index));}
-				else{errorNoticeToControlelr("illegal index, llegal indexes are:0-"+maze.getMaze()[0].length);}
+				else{errorNoticeToController("illegal index, llegal indexes are:0-"+maze.getMaze()[0].length);}
 			}
 			//Columns
 			else if(axe.equals("z"))
 			{
 				if((new Integer(index)) >=0 && (new Integer(index)) < maze.getMaze()[0][0].length){arrToRet = maze.getCrossSectionByZ(new Integer(index));}
-				else{errorNoticeToControlelr("illegal index, llegal indexes are:0-"+maze.getMaze()[0][0].length);}
+				else{errorNoticeToController("illegal index, llegal indexes are:0-"+maze.getMaze()[0][0].length);}
 			}
-			else{errorNoticeToControlelr("incorrect axe, the options are: X,Y,Z");}
+			else{errorNoticeToController("incorrect axe, the options are: X,Y,Z");}
 		}
-		else if(!maze3dMap.containsKey(mazeName)){errorNoticeToControlelr("problem with args");}
+		else if(!maze3dMap.containsKey(mazeName)){errorNoticeToController("problem with args");}
 		if(arrToRet!=null)
 		{
 			Object[] argsToRet= new Object[4];
@@ -250,11 +244,11 @@ public class MyModel extends Observable implements Model{
 			setChanged();
 			notifyObservers();
 		}
-		else{errorNoticeToControlelr("problem with args");}
+		else{errorNoticeToController("problem with args");}
 	}
 	@Override
 	public void saveCompressedMazeToFile(String mazeName, String fileName) throws IOException {
-		if(fileName.isEmpty()||mazeName.isEmpty()){errorNoticeToControlelr("Cannot resolve filename\\maze name");}
+		if(fileName.isEmpty()||mazeName.isEmpty()){errorNoticeToController("Cannot resolve filename\\maze name");}
 		else
 		{
 			if(maze3dMap.containsKey(mazeName))
@@ -290,19 +284,19 @@ public class MyModel extends Observable implements Model{
 						this.setChanged();
 						this.notifyObservers();
 					}
-					else{errorNoticeToControlelr("It seems that file exists/Cannot create file.");}
+					else{errorNoticeToController("It seems that file exists/Cannot create file.");}
 				}
 			}
 			else
 			{
-				errorNoticeToControlelr("The name is incorrect");
+				errorNoticeToController("The name is incorrect");
 				throw new NullPointerException("There is no maze " +mazeName);
 			}
 		}
 	}
 	@Override
 	public void loadAndDeCompressedMazeToFile(String fileName, String mazeName) throws IOException {
-		if(fileName.isEmpty()||mazeName.isEmpty()){errorNoticeToControlelr("File not found\\Cannot resolve maze name");}
+		if(fileName.isEmpty()||mazeName.isEmpty()){errorNoticeToController("File not found\\Cannot resolve maze name");}
 		else
 		{
 			File file = new File(fileName);
@@ -346,7 +340,7 @@ public class MyModel extends Observable implements Model{
 			else
 			{
 
-				errorNoticeToControlelr("File not found");
+				errorNoticeToController("File not found");
 				throw new FileNotFoundException("File not found");
 			}
 		}
@@ -364,12 +358,12 @@ public class MyModel extends Observable implements Model{
 			notifyObservers();
 		}
 		else	
-			errorNoticeToControlelr("There is no maze named: "+mazeName);
+			errorNoticeToController("There is no maze named: "+mazeName);
 	}
 	@Override
 	public void getSizeOfMazeInFile(String fileName) {
 		File f = new File(fileName);
-		if(!f.exists()){errorNoticeToControlelr("File "+fileName+" doesnt exists");}
+		if(!f.exists()){errorNoticeToController("File "+fileName+" doesnt exists");}
 		else
 		{
 			Object[] dataToSet = new Object[2];
@@ -388,7 +382,7 @@ public class MyModel extends Observable implements Model{
 		{
 			if(solutionMap.containsKey(maze3dMap.get(mazeName)))
 			{
-				System.out.println("Model notification: I have this solution, i won't calculate it again!");
+				errorNoticeToController("Model notification: I have this solution, i won't calculate it again!");
 				modelCompletedCommand=9;
 				setData(mazeName);
 				setChanged();
@@ -407,28 +401,28 @@ public class MyModel extends Observable implements Model{
 							SearchableMaze3d searchableMaze = new SearchableMaze3d(maze3dMap.get(mazeName));
 							if(algorithm.equals("bfs"))
 							{
-								errorNoticeToControlelr("Solving with BFS as your request.");
+								errorNoticeToController("Solving with BFS as your request.");
 								solveWithBFS(mazeName, d, searchableMaze);	
 							}
 							else if(algorithm.equals("a*"))
 							{
-								errorNoticeToControlelr("Solving with A* as your request.");
+								errorNoticeToController("Solving with A* as your request.");
 								solveWithAstar(mazeName, d, searchableMaze);
 							}
 							
 							else if (properties.getDefaultSolver().equals("A*"))
 							{
-								errorNoticeToControlelr("Solving with A* as your properties file.");
+								errorNoticeToController("Solving with A* as your properties file.");
 								solveWithAstar(mazeName, d, searchableMaze);
 							}
 							else if (properties.getDefaultSolver().equals("BFS"))
 							{
-								errorNoticeToControlelr("Solving with BFS as your properties file.");
+								errorNoticeToController("Solving with BFS as your properties file.");
 								solveWithBFS(mazeName, d, searchableMaze);
 							}
 							else 
 							{
-								errorNoticeToControlelr("Solving with A*.");
+								errorNoticeToController("Solving with A*.");
 								solveWithAstar(mazeName, d, searchableMaze);
 							}
 						}
@@ -438,7 +432,7 @@ public class MyModel extends Observable implements Model{
 				TP.submit(mazeSolver);
 			}
 		}
-		else{errorNoticeToControlelr("There is no maze named: "+mazeName);}
+		else{errorNoticeToController("There is no maze named: "+mazeName);}
 	}
 			
 	@Override
@@ -456,9 +450,9 @@ public class MyModel extends Observable implements Model{
 				this.data = dataToSet;
 				notifyObservers();
 			}
-			else{errorNoticeToControlelr("maze wasn't solve!");}
+			else{errorNoticeToController("maze wasn't solve!");}
 		}
-		else{errorNoticeToControlelr("maze wasn't solve!");}
+		else{errorNoticeToController("maze wasn't solve!");}
 	}
 	@Override
 	public void exit() {
@@ -470,7 +464,7 @@ public class MyModel extends Observable implements Model{
 			mapSave.flush();
 			mapSave.close();
 		} catch (Exception e) {
-			errorNoticeToControlelr("ThreadPool exit error");
+			errorNoticeToController("ThreadPool exit error");
 			e.printStackTrace();
 		}
 		
@@ -482,7 +476,7 @@ public class MyModel extends Observable implements Model{
 	* Ihis method will notice to controller an error messege
 	* @param s String represent the error to notice
 	*/
-	public void errorNoticeToControlelr(String s)
+	public void errorNoticeToController(String s)
 	{
 		modelCompletedCommand=-1;
 		data = s;
@@ -542,7 +536,7 @@ public class MyModel extends Observable implements Model{
 		try {
 			decoder=new XMLDecoder(new BufferedInputStream(new FileInputStream(fileName)));
 		} catch (FileNotFoundException e) {
-			System.out.println("ERROR: File " + fileName + " was not found.");
+			errorNoticeToController("ERROR: File " + fileName + " was not found.");
 			return false; 
 		}
 		//Loading the file object
@@ -555,7 +549,7 @@ public class MyModel extends Observable implements Model{
 		try {
 			encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("External files/properties.xml")));
 		} catch (FileNotFoundException e) {
-			System.out.println("ERROR: Writing file External files/properties.xml failed.");
+			errorNoticeToController("ERROR: Writing file External files/properties.xml failed.");
 			return false;
 		}
 		encoder.writeObject(properties);
