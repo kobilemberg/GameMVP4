@@ -21,13 +21,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
 import IO.MyCompressorOutputStream;
 import IO.MyDecompressorInputStream;
 import algorithms.demo.Demo;
@@ -46,7 +50,7 @@ public class MyModel extends Observable implements Model{
 	Object data;
 	int modelCompletedCommand=0;
 	ExecutorService TP ;
-	HashMap<String, Maze3d> maze3dMap = new HashMap<String, Maze3d>();
+	Map<String, Maze3d> maze3dMap = Collections.synchronizedMap(new HashMap<String, Maze3d>());
 	HashMap<Maze3d, Solution<Position>> solutionMap = new HashMap<Maze3d, Solution<Position>>();
 	HashMap<String, Thread> openThreads = new HashMap<String,Thread>();
 	Properties properties;
@@ -130,83 +134,77 @@ public class MyModel extends Observable implements Model{
 	}
 
 	@Override
-	synchronized public void generateMazeWithName(String name, String generator, String floors, String lines, String columns) {
-		synchronized (TP) {
-			maze3dMap.get("");
+	public void generateMazeWithName(String name, String generator, String floors, String lines, String columns) {
 		if(floors.isEmpty()||lines.isEmpty()||columns.isEmpty()){errorNoticeToController("Wrong parameters, Usage: generate 3d maze <name> <generator> <other params>");}
-		Callable<Maze3d> generateMazeThread = new Callable<Maze3d>() 
+		else
 		{
-			@Override
-			public Maze3d call() throws Exception 
-			{
-				synchronized (TP) {
-					Maze3dGenerator maze;
-					maze3dMap.get("");
-					if(generator.equals("mymaze3dgenerator"))
-					{
-						maze = new MyMaze3dGenerator();
-						errorNoticeToController("Generating maze with MyMaze3dGenerator as your request.");
-					}
-					
-					else if(generator.equals("simplemazegenerator"))
-					{
-						maze = new SimpleMaze3dGenerator();
-						errorNoticeToController("Generating maze with simplemazegenerator as your request.");
-					}
+			Future<Maze3d> f = TP.submit(new Callable<Maze3d>() {
+				@Override
+				public Maze3d call() throws Exception 
+				{
+						Maze3dGenerator maze;
+						if(generator.equals("mymaze3dgenerator"))
+						{
+							maze = new MyMaze3dGenerator();
+							errorNoticeToController("Generating maze with MyMaze3dGenerator as your request.");
+						}
 						
-					else if(properties.getDefaultAlgorith().equals("SimpleMazeGenerator"))
+						else if(generator.equals("simplemazegenerator"))
+						{
+							maze = new SimpleMaze3dGenerator();
+							errorNoticeToController("Generating maze with simplemazegenerator as your request.");
+						}
+							
+						else if(properties.getDefaultAlgorith().equals("SimpleMazeGenerator"))
+						{
+							errorNoticeToController("Generating maze with SimpleMaze3dGenerator as your properties file.");
+							maze = new SimpleMaze3dGenerator();
+						}
+						else if(properties.getDefaultAlgorith().equals("MyMaze3dGenerator"))
+						{
+							errorNoticeToController("Generating maze with MyMaze3dGenerator as your properties file.");
+							maze = new MyMaze3dGenerator();
+						}
+						else
+						{
+							errorNoticeToController("Generating maze with MyMaze3dGenerator because there were no configurations.");
+							maze = new MyMaze3dGenerator();
+						}
+						if(!floors.isEmpty()&&!lines.isEmpty()&&!columns.isEmpty())
+						{
+							Maze3d maze3dResult = maze.generate(new Integer(floors),new Integer(lines),new Integer(columns));
+							System.out.println("Generating");
+							System.out.println(maze3dResult.toString());
+							return maze3dResult;
+						}
+						else
+						{	
+							errorNoticeToController("Wrong parameters, Usage: generate 3d maze <name> <generator> <other params>");
+							return null;
+						}
+
+				}
+		
+			});
+			TP.execute(new Runnable() {
+				@Override
+				public void run() {
+					try{ 
+						maze3dMap.put(name, f.get());
+						setChanged();
+						modelCompletedCommand=2;
+						Object[] o = {name,f.get()};
+						setData(o);
+						notifyObservers(f.get());
+					}catch (Exception e)
 					{
-						errorNoticeToController("Generating maze with SimpleMaze3dGenerator as your properties file.");
-						maze = new SimpleMaze3dGenerator();
-					}
-					else if(properties.getDefaultAlgorith().equals("MyMaze3dGenerator"))
-					{
-						errorNoticeToController("Generating maze with MyMaze3dGenerator as your properties file.");
-						maze = new MyMaze3dGenerator();
-					}
-					else
-					{
-						errorNoticeToController("Generating maze with MyMaze3dGenerator because there were no configurations.");
-						maze = new MyMaze3dGenerator();
-					}
-					if(!floors.isEmpty()&&!lines.isEmpty()&&!columns.isEmpty())
-					{
-						System.out.println("Generating");
-						maze3dMap.put(name, maze.generate(new Integer(floors),new Integer(lines),new Integer(columns)));
-						System.out.println(maze3dMap.toString());
-						this.mazeIsReady(name);
-						System.out.println("Name: "+name);
-						return maze3dMap.get(name);
-						
-					}
-					else
-					{	
-						errorNoticeToController("Wrong parameters, Usage: generate 3d maze <name> <generator> <other params>");
-						return null;
+						System.out.println("Error: f.get() did not work properly. ");
+						e.printStackTrace();
 					}
 				}
-					
-				
-				
-			}
-
-			private void mazeIsReady(String name) 
-			{
-				System.out.println("Name: "+name);
-				System.out.println(maze3dMap.toString());
-				TP.isShutdown();
-				maze3dMap.get("");
-				setChanged();
-				modelCompletedCommand=2;
-				setData(name);
-				notifyObservers();
-			}
-		};
-		TP.submit(generateMazeThread);
-		maze3dMap.get("");
-		}
+			});
+		}	
 	}
-	
 
 	@Override
 	public void getMazeWithName(String nameOfMaze) {

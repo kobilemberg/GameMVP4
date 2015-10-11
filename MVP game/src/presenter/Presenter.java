@@ -244,7 +244,7 @@ public class Presenter implements Observer {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	synchronized public void update(Observable o, Object args) {
+	 public void update(Observable o, Object args) {
 		if(o==view)
 		{
 			String[] argArr = ((String[])args).clone();
@@ -257,13 +257,9 @@ public class Presenter implements Observer {
 			
 			case 2:
 				try {
-					
-					
-					synchronized (model) {
-						model.generateMazeWithName(argArr[0], argArr[1],  argArr[2],  argArr[3],  argArr[4]);}
+						model.generateMazeWithName(argArr[0], argArr[1],  argArr[2],  argArr[3],  argArr[4]);
 					}
-					
-				catch (Exception e) {
+					catch (Exception e) {
 					e.printStackTrace();
 					view.errorNoticeToUser("Exception: Wrong parameters, Usage:generate 3d maze <name> <algorythm> <other params>");
 				}
@@ -328,8 +324,7 @@ public class Presenter implements Observer {
 				break;
 			}
 		}
-		
-		
+
 		else if(o==model)
 		{
 			int modelCompletedNum = model.getModelCompletedCommand();
@@ -343,7 +338,8 @@ public class Presenter implements Observer {
 					
 				case 2:
 					//maze is ready;
-					view.tellTheUserMazeIsReady((String)model.getData());
+					String s =(String) ((Object[]) model.getData())[0];
+					view.tellTheUserMazeIsReady(s);
 					break;
 					
 				case 3:

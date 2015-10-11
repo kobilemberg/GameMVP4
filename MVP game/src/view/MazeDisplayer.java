@@ -27,7 +27,7 @@ public abstract class MazeDisplayer extends Canvas{
 
 	
 	public MazeDisplayer(Composite parent, int style) {
-		super(parent, style);
+ 		super(parent, style);
 	}
 
 	public void setMazeData(int[][] mazeData){
