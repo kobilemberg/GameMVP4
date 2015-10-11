@@ -6,7 +6,7 @@ package model;
  * MyModel class implements Model interface, 
  * class goal is to act as MVC Model and perform all business logic calculations.
  */
-
+ 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
