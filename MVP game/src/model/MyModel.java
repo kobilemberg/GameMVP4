@@ -173,8 +173,6 @@ public class MyModel extends Observable implements Model{
 						if(!floors.isEmpty()&&!lines.isEmpty()&&!columns.isEmpty())
 						{
 							Maze3d maze3dResult = maze.generate(new Integer(floors),new Integer(lines),new Integer(columns));
-							System.out.println("Generating");
-							System.out.println(maze3dResult.toString());
 							return maze3dResult;
 						}
 						else
@@ -186,23 +184,24 @@ public class MyModel extends Observable implements Model{
 				}
 		
 			});
-			TP.execute(new Runnable() {
-				@Override
-				public void run() {
+			//TP.execute(new Runnable() {
+				//@Override
+				//public void run() {
 					try{ 
-						maze3dMap.put(name, f.get());
+						Maze3d mazeToSet = f.get();
+						mazeToSet = f.get();
+						maze3dMap.put(name, mazeToSet);
 						setChanged();
 						modelCompletedCommand=2;
-						Object[] o = {name,f.get()};
+						Object[] o = {name,mazeToSet};
 						setData(o);
 						notifyObservers(f.get());
 					}catch (Exception e)
 					{
-						System.out.println("Error: f.get() did not work properly. ");
-						e.printStackTrace();
+						errorNoticeToController("Error: f.get() did not work properly. ");
 					}
-				}
-			});
+				//}
+			//});
 		}	
 	}
 
@@ -222,13 +221,7 @@ public class MyModel extends Observable implements Model{
 				data= dataToSet;
 				setChanged();
 				notifyObservers();
-			}
-			else
-			{
-				System.out.println("Else");
-			}
-		
-		
+			}		
 	}
 	@Override
 	public void getCrossSectionByAxe(String axe, String index, String mazeName) {

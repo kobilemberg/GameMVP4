@@ -53,7 +53,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	boolean won=false;
 	String game; 
 	WelcomeDisplayer welcomeDisplayer;
-
+	
 	public MazeBasicWindow(String title, int width, int height,HashMap<String, Command> viewCommandMap) {
 		super(title, width, height);
 		this.viewCommandMap = viewCommandMap;
@@ -62,6 +62,9 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	@Override
 	void initWidgets() {
 
+		
+		
+		
 		
 		GridLayout grid = new GridLayout(2,false); 
 		shell.setLayout(grid);
@@ -119,7 +122,14 @@ public class MazeBasicWindow extends BasicWindow implements View{
         Button testButton = new Button(optionsForm, SWT.PUSH);
         testButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
         testButton.setText("Hint");
-
+        
+        
+        
+        welcomeDisplayer = new  WelcomeDisplayer(shell, SWT.BORDER);
+		welcomeDisplayer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
+        
+        
+        
 		/* What happens when a user clicks "File" > "Open Properties" */  
 		openProperties.addSelectionListener(new SelectionListener() {
 			
@@ -202,11 +212,20 @@ public class MazeBasicWindow extends BasicWindow implements View{
 				};				
 				timer.scheduleAtFixedRate(task, 0, 100);	
 */
-				game = "maze";
-				if (game.equals("maze"))
+				game = "mazeGame";
+				if (game.equals("mazeGame"))
 				{
-					initMaze();	
-					initKeyListeners();
+					if(maze==null)
+					{
+						initMaze();	
+					}
+					else
+					{
+						initKeyListeners();
+						maze.setFocus();
+					}
+						
+					
 					/* UI Grid */ 
 
 				}
@@ -217,7 +236,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 
 				startButton.setEnabled(false);
 				stopButton.setEnabled(true);
-				shell.layout();
+//				/shell.layout();
 			}
 			
 			@Override
@@ -232,6 +251,23 @@ public class MazeBasicWindow extends BasicWindow implements View{
 				startButton.setEnabled(true);
 				stopButton.setEnabled(false);
 				started=false;
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {}
+		});
+		
+		
+		
+		/* What happens when a user clicks "[Solve]". */
+		solveButton.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if(maze!=null)
+				{
+					//maze.mazeData = 
+				}
 			}
 			
 			@Override
@@ -356,11 +392,6 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		String[] mazeArgs =  {"test","default","2","10","18"};
 		this.viewCommandMap.get("generate 3d maze").doCommand(mazeArgs);
 		
-		maze=new Maze3dDisplayer(shell, SWT.BORDER);
-
-        maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
-        //maze.setLayoutData(new GridData(horizontalAlignment, verticalAlignment, grabExcessHorizontalSpace, grabExcessVerticalSpace, horizontalSpan, verticalSpan));
-		((Maze3dDisplayer)maze).setMazeBasicWindow(this);
 		
 		
 
@@ -410,26 +441,26 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	@Override
 	public void printMazeToUser(Maze3d mazeWithName,String name) {
-
-		System.out.println("MazeWithName: "+mazeWithName);
-		this.mazeData = mazeWithName;
-		System.out.println("mazeWithName: "+mazeWithName);
-		this.crossedArr = this.mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
-		maze.mazeData = crossedArr;
+		maze=new Maze3dDisplayer(shell, SWT.BORDER);
+        maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
+       
+        //maze.forceFocus();
+        //maze.setLayoutData(new GridData(horizontalAlignment, verticalAlignment, grabExcessHorizontalSpace, grabExcessVerticalSpace, horizontalSpan, verticalSpan));
+		((Maze3dDisplayer)maze).setMazeBasicWindow(this);
+		initKeyListeners();
+		mazeData = mazeWithName;
+		//System.out.println("mazeWithName: "+mazeWithName);
+		//crossedArr = mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
+		String[] args={"x",mazeData.getStartPosition().getXPosition()+"","for",name};
+		viewCommandMap.get("display cross section by").doCommand(args);
+		
+		
+		
 		this.maze.setExitX(mazeWithName.getGoalPosition().getYposition());
 		this.maze.setExitY(mazeWithName.getGoalPosition().getZposition());
 		this.maze.setExitFloor(mazeWithName.getGoalPosition().getXPosition()); 
 		
 		maze.setCharacterPosition(mazeWithName.getStartPosition().getYposition(), mazeWithName.getStartPosition().getZposition());
-		this.currentFloor = mazeData.getStartPosition().getXPosition();
-		out.println("Maze: "+name+"\n"+mazeWithName.toString());
-		out.flush();
-		welcomeDisplayer.dispose();
-		System.out.println("Test");
-		maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
-		//maze.handle;
-		shell.layout();
-		shell.pack();
 	}
 	
 	
@@ -505,6 +536,30 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	@Override
 	public void printToUserCrossedArray(int[][] crossedArr, String axe, String index, String name) {
+		
+		
+		
+		//crossedArr = mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
+
+				maze.mazeData = crossedArr;
+				
+				this.currentFloor = mazeData.getStartPosition().getXPosition();
+				//out.println("Maze: "+name+"\n"+mazeWithName.toString());
+				//out.flush();
+				//welcomeDisplayer.dispose();
+				//System.out.println("Test");
+				//maze.set
+				maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
+				//maze.setBounds(welcomeDisplayer.getBounds());
+				welcomeDisplayer.dispose();
+				//maze.handle;
+				shell.layout();
+				maze.forceFocus();
+				
+				//shell.pack();
+		
+		
+		
 		System.out.println("Crossed Arr!!!");
 		this.crossedArr = crossedArr;
 		out.println("Crossed maze: "+name+ " by axe: "+axe+" with index: "+index);

@@ -38,7 +38,7 @@ public class Run {
 		if(properties.getUI().equals("GUI"))
 		{
 			MyModel model = new MyModel(properties);
-			MazeBasicWindow view=new MazeBasicWindow("3D Maze Game", 500, 300,null);
+			MazeBasicWindow view=new MazeBasicWindow("3D Maze Game", 1000, 600,null);
 			
 			//win.setCommands();
 			//view.setMazeWindow(win);
