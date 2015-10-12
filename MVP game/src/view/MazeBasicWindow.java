@@ -127,7 +127,21 @@ public class MazeBasicWindow extends BasicWindow implements View{
         
         Button testButton = new Button(optionsForm, SWT.PUSH);
         testButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-        testButton.setText("Hint");
+        testButton.setText("Test!");
+        
+        
+        /* Options form */ 
+        Label label = new Label(shell, SWT.BORDER);
+    	//label.setSize(100,30);
+    	label.setLayoutData(new GridData(SWT.LEFT, SWT.LEFT, false, false, 1, 1));
+    	//label.setLocation(50, 50);
+    	label.setText("I am a Label");
+    	
+    	//Label shadow_sep_h = new Label(shell, SWT.SEPARATOR | SWT.SHADOW_OUT | SWT.HORIZONTAL);
+    	//shadow_sep_h.setBounds(50,80,100,50);
+    	
+    //	Label shadow_sep_v = new Label(shell, SWT.SEPARATOR | SWT.SHADOW_IN | SWT.VERTICAL);
+    //	shadow_sep_v.setBounds(50,100,5,100);
         
         
         
@@ -186,15 +200,20 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		exitItem.addSelectionListener(new SelectionListener() {
 			
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				display.dispose(); // dispose OS components
+			public void widgetSelected(SelectionEvent arg0)
+			{
+				MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION| SWT.YES | SWT.NO);
+				messageBox.setMessage("Are you sure you want to exit?");
+				messageBox.setText("Exit Confirmation");
+				int response = messageBox.open();
+				if (response == SWT.YES)
+					display.dispose();// dispose OS components
 			}
 			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
-				
-			}
+				}
 		});
 
 		/* What happens when a user clicks "[Start]". */ 
@@ -643,24 +662,12 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			@Override
 			public void run() {
 				ArrayList<State<Position>> solutionToDisplay = new ArrayList<State<Position>>();
-				if(isSolving)
+				if(isSolving){solutionToDisplay=solution.getSolution();}
+				else{solutionToDisplay.add(solution.getSolution().get(0));}
+				for (State<Position> p: solutionToDisplay)
 				{
-					solutionToDisplay=solution.getSolution();
-				}
-
-				else
-					solutionToDisplay.add(solution.getSolution().get(0));
-				
-				
-				
-				
-				
-				for (State<Position> p: solutionToDisplay){
 					
-					if(shell.isDisposed())
-					{
-						Thread.currentThread().interrupt();
-					}
+					if(shell.isDisposed()){Thread.currentThread().interrupt();}
 					else if(p.getCameFromAction().equals("Down"))
 					{
 						getFloorUpCrossedArr("DOWN");
@@ -671,31 +678,18 @@ public class MazeBasicWindow extends BasicWindow implements View{
 						getFloorUpCrossedArr("UP");
 						mazeDisplayerCanvas.moveUp();
 					}	
-					else if(p.getCameFromAction().equals("Backward"))
-					{
-						mazeDisplayerCanvas.moveForward();
-					}
-					else if(p.getCameFromAction().equals("Forward"))
-					{
-						mazeDisplayerCanvas.moveBackward();
-					}
-					else if(p.getCameFromAction().equals("Left"))
-					{
-						mazeDisplayerCanvas.moveLeft();
-					}
-					else if(p.getCameFromAction().equals("Right"))
-					{
-						mazeDisplayerCanvas.moveRight();
-					}
+					else if(p.getCameFromAction().equals("Backward")){mazeDisplayerCanvas.moveForward();}
+					else if(p.getCameFromAction().equals("Forward")){mazeDisplayerCanvas.moveBackward();}
+					else if(p.getCameFromAction().equals("Left")){mazeDisplayerCanvas.moveLeft();}
+					else if(p.getCameFromAction().equals("Right")){mazeDisplayerCanvas.moveRight();}
 					
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
+					try {Thread.sleep(1000);} 
+					catch (InterruptedException e) 
+					{
 						// TODO Auto-generated catch block
 						//e.printStackTrace();
 					}
-					}
-				
+				}
 			}
 		});
 		
@@ -719,18 +713,15 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	}
 	
 	@Override
-	public void errorNoticeToUser(String s) {
+	public void errorNoticeToUser(String s) 
+	{
 		Display.getDefault().asyncExec(new Runnable() {
 		    public void run() {
 		    	MessageBox messageBox = new MessageBox(new Shell(display),SWT.ICON_INFORMATION|SWT.OK);
 				messageBox.setMessage(s);
 				messageBox.setText("Notification");
 				messageBox.open();
-				if(mazeDisplayerCanvas!=null)
-				{
-					mazeDisplayerCanvas.setFocus();
-				}
-				
+				if(mazeDisplayerCanvas!=null){mazeDisplayerCanvas.setFocus();}
 		    }
 		});
 	}
@@ -757,65 +748,46 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	/**
 	 * @return the cli
 	 */
-	public CLI getCli() {
-		return cli;
-	}
+	public CLI getCli() {return cli;}
 	/**
 	 * @param cli the cli to set
 	 */
-	public void setCli(CLI cli) {
-		this.cli = cli;
-	}
+	public void setCli(CLI cli) {this.cli = cli;}
+	
 	/**
 	 * @return the viewCommandMap
 	 */
-	public HashMap<String, Command> getViewCommandMap() {
-		return viewCommandMap;
-	}
+	public HashMap<String, Command> getViewCommandMap() {return viewCommandMap;}
 
 	/**
 	 * @return the cliMenu
 	 */
-	public String getCliMenu() {
-		return cliMenu;
-	}
+	public String getCliMenu() {return cliMenu;}
 	/**
 	 * @param cliMenu the cliMenu to set
 	 */
-	public void setCliMenu(String cliMenu) {
-		this.cliMenu = cliMenu;
-	}
+	public void setCliMenu(String cliMenu) {this.cliMenu = cliMenu;}
 	/**
 	 * @return the in
 	 */
-	public BufferedReader getIn() {
-		return in;
-	}
+	public BufferedReader getIn() {return in;}
 	/**
 	 * @param in the in to set
 	 */
-	public void setIn(BufferedReader in) {
-		this.in = in;
-	}
+	public void setIn(BufferedReader in) {this.in = in;}
 	/**
 	 * @return the out
 	 */
-	public PrintWriter getOut() {
-		return out;
-	}
+	public PrintWriter getOut() {return out;}
 	/**
 	 * @param out the out to set
 	 */
-	public void setOut(PrintWriter out) {
-		this.out = out;
-	}
+	public void setOut(PrintWriter out) {this.out = out;}
 	
 	/**
 	 * @return the won
 	 */
-	public boolean isWon() {
-		return won;
-	}
+	public boolean isWon() {return won;}
 
 	/**
 	 * @param won the won to set
@@ -837,32 +809,10 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			}
 						
 		}
-		
 		display.dispose(); // dispose OS components
 		setUserCommand(11);
 		String[] args= {"Exit"};
 		System.out.println("Exiting now");
 		notifyObservers(args);
-		
-	}
-	
-	
-
-	private void randomWalk(MazeDisplayer maze){
-	//	Random r=new Random();
-	//	boolean b1,b2;
-	//	b1=r.nextBoolean();
-	//	b2=r.nextBoolean();
-	//	if(b1&&b2)
-	//		maze.moveUp();
-	//	if(b1&&!b2)
-	//		maze.moveDown();
-	//	if(!b1&&b2)
-	//		maze.moveRight();
-	//	if(!b1&&!b2)
-	//		maze.moveLeft();
-		
-	//	maze.redraw();
-		
 	}
 }
