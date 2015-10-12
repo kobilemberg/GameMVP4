@@ -44,15 +44,15 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
 	PrintWriter out=new PrintWriter(System.out);
 	private CLI cli;
-	Maze3d mazeData;
+	Maze3d mazeObject;
 	int userCommand=0;
-	int[][] crossedArr;
+	int[][] currentFloorCrossedArr;
 	int currentFloor;
-	MazeDisplayer maze;
+	MazeDisplayer mazeDisplayerCanvas;
 	boolean started =false;
 	boolean won=false;
 	String game; 
-	WelcomeDisplayer welcomeDisplayer;
+	WelcomeDisplayer welcomeDisplayerCanvas;
 	
 	public MazeBasicWindow(String title, int width, int height,HashMap<String, Command> viewCommandMap) {
 		super(title, width, height);
@@ -125,8 +125,8 @@ public class MazeBasicWindow extends BasicWindow implements View{
         
         
         
-        welcomeDisplayer = new  WelcomeDisplayer(shell, SWT.BORDER);
-		welcomeDisplayer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
+        welcomeDisplayerCanvas = new  WelcomeDisplayer(shell, SWT.BORDER);
+		welcomeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
         
         
         
@@ -215,14 +215,14 @@ public class MazeBasicWindow extends BasicWindow implements View{
 				game = "mazeGame";
 				if (game.equals("mazeGame"))
 				{
-					if(maze==null)
+					if(mazeDisplayerCanvas==null)
 					{
-						initMaze();	
+						initMazeDisplayerAndMazeCurrentFloorCrossedArr();	
 					}
 					else
 					{
 						initKeyListeners();
-						maze.setFocus();
+						mazeDisplayerCanvas.setFocus();
 					}
 						
 					
@@ -264,9 +264,10 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if(maze!=null)
+				if(mazeDisplayerCanvas!=null)
 				{
-					//maze.mazeData = 
+					String[] mazeNameArr = {"test","A*"};
+					viewCommandMap.get("solve").doCommand(mazeNameArr);
 				}
 			}
 			
@@ -322,7 +323,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 
 	public void initKeyListeners()
 	{
-		maze.addKeyListener(new KeyListener() 
+		mazeDisplayerCanvas.addKeyListener(new KeyListener() 
 		{
             boolean pageDownKey = false;
             boolean PageUp = false;
@@ -334,25 +335,25 @@ public class MazeBasicWindow extends BasicWindow implements View{
 				{
 					switch (e.keyCode) 
 					{
-						case SWT.ARROW_DOWN:	maze.moveBackward();
+						case SWT.ARROW_DOWN:	mazeDisplayerCanvas.moveBackward();
 							break;
-						case SWT.ARROW_UP:		maze.moveForward();
+						case SWT.ARROW_UP:		mazeDisplayerCanvas.moveForward();
 							break;
-						case SWT.ARROW_LEFT:	maze.moveLeft();
+						case SWT.ARROW_LEFT:	mazeDisplayerCanvas.moveLeft();
 							break;
-						case SWT.ARROW_RIGHT:	maze.moveRight();
+						case SWT.ARROW_RIGHT:	mazeDisplayerCanvas.moveRight();
 							break;
 						case SWT.PAGE_DOWN:
 							if(pageDownKey)
 							{
-								maze.moveDown();
+								mazeDisplayerCanvas.moveDown();
 								pageDownKey=false;
 							}
 							break;
 						case SWT.PAGE_UP:
 							if(PageUp)
 							{
-								maze.moveUp();
+								mazeDisplayerCanvas.moveUp();
 								PageUp=false;
 							}
 							break;
@@ -387,7 +388,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		});
 	}
 	
-	private void initMaze() 
+	private void initMazeDisplayerAndMazeCurrentFloorCrossedArr() 
 	{
 		String[] mazeArgs =  {"test","default","2","10","18"};
 		this.viewCommandMap.get("generate 3d maze").doCommand(mazeArgs);
@@ -399,8 +400,8 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	private void initGame()
 	{
-		welcomeDisplayer = new  WelcomeDisplayer(shell, SWT.BORDER);
-		welcomeDisplayer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
+		welcomeDisplayerCanvas = new  WelcomeDisplayer(shell, SWT.BORDER);
+		welcomeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
 	}
 
 //	public static void main(String[] args) {
@@ -441,26 +442,26 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	@Override
 	public void printMazeToUser(Maze3d mazeWithName,String name) {
-		maze=new Maze3dDisplayer(shell, SWT.BORDER);
-        maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
+		mazeDisplayerCanvas=new Maze3dDisplayer(shell, SWT.BORDER);
+        mazeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
        
         //maze.forceFocus();
         //maze.setLayoutData(new GridData(horizontalAlignment, verticalAlignment, grabExcessHorizontalSpace, grabExcessVerticalSpace, horizontalSpan, verticalSpan));
-		((Maze3dDisplayer)maze).setMazeBasicWindow(this);
+		((Maze3dDisplayer)mazeDisplayerCanvas).setMazeBasicWindow(this);
 		initKeyListeners();
-		mazeData = mazeWithName;
+		mazeObject = mazeWithName;
 		//System.out.println("mazeWithName: "+mazeWithName);
 		//crossedArr = mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
-		String[] args={"x",mazeData.getStartPosition().getXPosition()+"","for",name};
+		String[] args={"x",mazeObject.getStartPosition().getXPosition()+"","for",name};
 		viewCommandMap.get("display cross section by").doCommand(args);
 		
 		
 		
-		this.maze.setExitX(mazeWithName.getGoalPosition().getYposition());
-		this.maze.setExitY(mazeWithName.getGoalPosition().getZposition());
-		this.maze.setExitFloor(mazeWithName.getGoalPosition().getXPosition()); 
+		this.mazeDisplayerCanvas.setExitX(mazeWithName.getGoalPosition().getYposition());
+		this.mazeDisplayerCanvas.setExitY(mazeWithName.getGoalPosition().getZposition());
+		this.mazeDisplayerCanvas.setExitFloor(mazeWithName.getGoalPosition().getXPosition()); 
 		
-		maze.setCharacterPosition(mazeWithName.getStartPosition().getYposition(), mazeWithName.getStartPosition().getZposition());
+		mazeDisplayerCanvas.setCharacterPosition(mazeWithName.getStartPosition().getYposition(), mazeWithName.getStartPosition().getZposition());
 	}
 	
 	
@@ -468,21 +469,21 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	{
 		if(direction.toUpperCase().equals("UP"))
 		{
-			if(currentFloor>=0&&currentFloor<(this.mazeData.getMaze().length-1))
+			if(currentFloor>=0&&currentFloor<(this.mazeObject.getMaze().length-1))
 			{
 				System.out.println("Prepering to go up from: "+currentFloor+" to: "+(currentFloor+1));
-				int[][] crossedArrToCheck = this.mazeData.getCrossSectionByX(currentFloor+1);
+				int[][] crossedArrToCheck = this.mazeObject.getCrossSectionByX(currentFloor+1);
 				System.out.println("Next floor:");
 				printArr(crossedArrToCheck);
-				System.out.println("Charecter position: "+maze.getCharacterX()+","+maze.getCharacterY());
-				System.out.println("The cell is: "+crossedArrToCheck[maze.getCharacterX()][maze.getCharacterY()]);
+				System.out.println("Charecter position: "+mazeDisplayerCanvas.getCharacterX()+","+mazeDisplayerCanvas.getCharacterY());
+				System.out.println("The cell is: "+crossedArrToCheck[mazeDisplayerCanvas.getCharacterX()][mazeDisplayerCanvas.getCharacterY()]);
 				//this.crossedArr = this.mazeData.getCrossSectionByX(currentFloor+1);
-				if(crossedArrToCheck[maze.getCharacterX()][maze.getCharacterY()]==0)
+				if(crossedArrToCheck[mazeDisplayerCanvas.getCharacterX()][mazeDisplayerCanvas.getCharacterY()]==0)
 				{
-					this.crossedArr = crossedArrToCheck;
+					this.currentFloorCrossedArr = crossedArrToCheck;
 					currentFloor++;
-					((Maze3dDisplayer) maze).setCurrentFloor(currentFloor);
-					maze.mazeData = crossedArr;
+					((Maze3dDisplayer) mazeDisplayerCanvas).setCurrentFloor(currentFloor);
+					mazeDisplayerCanvas.mazeData = currentFloorCrossedArr;
 					return true;
 				}
 				else
@@ -501,20 +502,20 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		
 		else if(direction.toUpperCase().equals("DOWN"))
 		{
-			if(currentFloor>=1&&currentFloor<=(this.mazeData.getMaze().length-1))
+			if(currentFloor>=1&&currentFloor<=(this.mazeObject.getMaze().length-1))
 			{
 				System.out.println("Prepering to go down from: "+currentFloor+" to: "+(currentFloor-1));
-				int[][] crossedArrToCheck = this.mazeData.getCrossSectionByX(currentFloor-1);
+				int[][] crossedArrToCheck = this.mazeObject.getCrossSectionByX(currentFloor-1);
 				System.out.println("Previous floor:");
 				printArr(crossedArrToCheck);
-				System.out.println("Charecter position: "+maze.getCharacterX()+","+maze.getCharacterY());
-				System.out.println("The cell is: "+crossedArrToCheck[maze.getCharacterX()][maze.getCharacterY()]);
-				if(crossedArrToCheck[maze.getCharacterX()][maze.getCharacterY()]==0)
+				System.out.println("Charecter position: "+mazeDisplayerCanvas.getCharacterX()+","+mazeDisplayerCanvas.getCharacterY());
+				System.out.println("The cell is: "+crossedArrToCheck[mazeDisplayerCanvas.getCharacterX()][mazeDisplayerCanvas.getCharacterY()]);
+				if(crossedArrToCheck[mazeDisplayerCanvas.getCharacterX()][mazeDisplayerCanvas.getCharacterY()]==0)
 				{
-					this.crossedArr =crossedArrToCheck;
+					this.currentFloorCrossedArr =crossedArrToCheck;
 					currentFloor--;
-					((Maze3dDisplayer) maze).setCurrentFloor(currentFloor);
-					maze.mazeData = crossedArr;
+					((Maze3dDisplayer) mazeDisplayerCanvas).setCurrentFloor(currentFloor);
+					mazeDisplayerCanvas.mazeData = currentFloorCrossedArr;
 					return true;
 				}
 				else
@@ -541,27 +542,27 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		
 		//crossedArr = mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
 
-				maze.mazeData = crossedArr;
+				mazeDisplayerCanvas.mazeData = crossedArr;
 				
-				this.currentFloor = mazeData.getStartPosition().getXPosition();
+				this.currentFloor = mazeObject.getStartPosition().getXPosition();
 				//out.println("Maze: "+name+"\n"+mazeWithName.toString());
 				//out.flush();
 				//welcomeDisplayer.dispose();
 				//System.out.println("Test");
 				//maze.set
-				maze.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
+				mazeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
 				//maze.setBounds(welcomeDisplayer.getBounds());
-				welcomeDisplayer.dispose();
+				welcomeDisplayerCanvas.dispose();
 				//maze.handle;
 				shell.layout();
-				maze.forceFocus();
+				mazeDisplayerCanvas.forceFocus();
 				
 				//shell.pack();
 		
 		
 		
 		System.out.println("Crossed Arr!!!");
-		this.crossedArr = crossedArr;
+		this.currentFloorCrossedArr = crossedArr;
 		out.println("Crossed maze: "+name+ " by axe: "+axe+" with index: "+index);
 		out.flush();
 		printArr(crossedArr);
@@ -598,6 +599,9 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	public void tellTheUserSolutionIsReady(String mazeName) {
 		out.println("Solution for "+mazeName+" is Ready, you can take it!");
 		out.flush();
+		
+		String[] mazeNameArr = {"test","A*"};
+		viewCommandMap.get("display solution").doCommand(mazeNameArr);
 	}
 	
 	@Override
@@ -608,6 +612,56 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			out.println(p.getCameFromAction() + " To: "+p.toString());
 			out.flush();
 			}
+			
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				for (State<Position> p: solution.getSolution()){
+					
+					if(shell.isDisposed())
+					{
+						Thread.currentThread().interrupt();
+					}
+					else if(p.getCameFromAction().equals("Down"))
+					{
+						getFloorUpCrossedArr("DOWN");
+						mazeDisplayerCanvas.moveDown();
+					}
+					else if(p.getCameFromAction().equals("Up"))
+					{
+						getFloorUpCrossedArr("UP");
+						mazeDisplayerCanvas.moveUp();
+					}	
+					else if(p.getCameFromAction().equals("Backward"))
+					{
+						mazeDisplayerCanvas.moveForward();
+					}
+					else if(p.getCameFromAction().equals("Forward"))
+					{
+						mazeDisplayerCanvas.moveBackward();
+					}
+					else if(p.getCameFromAction().equals("Left"))
+					{
+						mazeDisplayerCanvas.moveLeft();
+					}
+					else if(p.getCameFromAction().equals("Right"))
+					{
+						mazeDisplayerCanvas.moveRight();
+					}
+					
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+					}
+					}
+				
+			}
+		});
+		
+		t.start();
 	}
 	
 	@Override

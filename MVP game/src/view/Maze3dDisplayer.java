@@ -117,7 +117,7 @@ public class Maze3dDisplayer extends MazeDisplayer {
 		});
 	}
 	
-	private void moveCharacter(int x,int y){
+	public void moveCharacter(int x,int y){
 		if(y>=0 && y<mazeData[0].length && x>=0 && x<mazeData.length && mazeData[x][y]==0){
 			System.out.println("Moving from: ("+characterX+","+characterY+") to: ("+x+","+y+")");
 			characterX=x;
