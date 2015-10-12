@@ -405,7 +405,12 @@ public class Presenter implements Observer {
 					
 				case -1:
 					//Error
-					view.errorNoticeToUser((String) model.getData());
+					try {
+						view.errorNoticeToUser((String) model.getData());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
 					break;
 					
 				default:

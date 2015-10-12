@@ -198,7 +198,7 @@ public class MyModel extends Observable implements Model{
 						notifyObservers(f.get());
 					}catch (Exception e)
 					{
-						errorNoticeToController("Error: f.get() did not work properly. ");
+						//errorNoticeToController("Error: f.get() did not work properly. ");
 					}
 				//}
 			//});

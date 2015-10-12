@@ -3,6 +3,7 @@ package view;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,9 +21,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -53,6 +57,8 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	boolean won=false;
 	String game; 
 	WelcomeDisplayer welcomeDisplayerCanvas;
+	boolean isSolving = true;
+	
 	
 	public MazeBasicWindow(String title, int width, int height,HashMap<String, Command> viewCommandMap) {
 		super(title, width, height);
@@ -252,6 +258,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			public void widgetSelected(SelectionEvent arg0) {
 				if(mazeDisplayerCanvas!=null)
 				{
+					isSolving=true;
 					//Updating the model about current place in maze
 					setUserCommand(13);
 					String[] params = {"test",currentFloor+"",mazeDisplayerCanvas.getCharacterX()+"",mazeDisplayerCanvas.getCharacterY()+""};
@@ -266,6 +273,32 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {}
 		});
+		
+		
+		
+		/* What happens when a user clicks "[Hint]". */
+		hintButton.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if(mazeDisplayerCanvas!=null)
+				{
+					isSolving=false;
+					//Updating the model about current place in maze
+					setUserCommand(13);
+					String[] params = {"test",currentFloor+"",mazeDisplayerCanvas.getCharacterX()+"",mazeDisplayerCanvas.getCharacterY()+""};
+					notifyObservers(params);
+					
+					//Position positionToStart = new Position(currentFloor, mazeDisplayerCanvas.getCharacterX(), mazeDisplayerCanvas.getCharacterY());
+					//String[] mazeNameArr = {"test","A*",currentFloor+"",mazeDisplayerCanvas.getCharacterX()+"",mazeDisplayerCanvas.getCharacterY()+""};
+					//viewCommandMap.get("solve").doCommand(mazeNameArr);
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {}
+		});
+		
 		
 	}
 
@@ -609,7 +642,20 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			
 			@Override
 			public void run() {
-				for (State<Position> p: solution.getSolution()){
+				ArrayList<State<Position>> solutionToDisplay = new ArrayList<State<Position>>();
+				if(isSolving)
+				{
+					solutionToDisplay=solution.getSolution();
+				}
+
+				else
+					solutionToDisplay.add(solution.getSolution().get(0));
+				
+				
+				
+				
+				
+				for (State<Position> p: solutionToDisplay){
 					
 					if(shell.isDisposed())
 					{
@@ -674,8 +720,19 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	@Override
 	public void errorNoticeToUser(String s) {
-		out.println("Notification:\n"+s);
-		out.flush();	
+		Display.getDefault().asyncExec(new Runnable() {
+		    public void run() {
+		    	MessageBox messageBox = new MessageBox(new Shell(display),SWT.ICON_INFORMATION|SWT.OK);
+				messageBox.setMessage(s);
+				messageBox.setText("Notification");
+				messageBox.open();
+				if(mazeDisplayerCanvas!=null)
+				{
+					mazeDisplayerCanvas.setFocus();
+				}
+				
+		    }
+		});
 	}
 	
 	@Override
@@ -763,17 +820,10 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	/**
 	 * @param won the won to set
 	 */
-	public void setWon(boolean won) {
-		
-		
-		this.won = won;
-	}
+	public void setWon(boolean won) {this.won = won;}
 
 	@Override
-	public void start() {
-		this.run();
-		
-	}
+	public void start() {this.run();}
 	
 	
 	@Override

@@ -1,5 +1,7 @@
 package view;
 
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -19,8 +21,10 @@ public class WelcomeDisplayer extends Canvas {
 			
 			final Color white=new Color(null, 255, 255, 255);
 			final Color black=new Color(null, 150,150,150);
-			Image bGImage = new Image(getDisplay(), "Resources/wood-floor-texture.jpg");
-			setBackgroundImage(bGImage);
+			Image bGImage = new Image(getDisplay(), "Resources/ze1io.png");
+			
+			//setBackgroundImage(bGImage);
+			//getShell().setBackgroundImage(bGImage);
 			//setBackground(white);
 			addPaintListener(new PaintListener() 
 			{
@@ -38,9 +42,13 @@ public class WelcomeDisplayer extends Canvas {
 					   double h=(double)height/Welcome.length();
 					  
 					   
-					   Image welcomeImage = new Image(getDisplay(), "Resources/welcome_mat.jpg");
-					   //e.gc.drawImage(welcomeImage, 0, 0,welcomeImage.getBounds().width,welcomeImage.getBounds().height,0,0, (int) (getShell().getBounds().width*0.90), (int) (getShell().getBounds().height*0.90));
+					// Image welcomeImage = new Image(getDisplay(), "Resources/welcome_mat.jpg");
+					   e.gc.drawImage(bGImage, 0, 0,bGImage.getBounds().width,bGImage.getBounds().height,0,0, (int) (getShell().getBounds().width*0.90), (int) (getShell().getBounds().height*0.88));
 					   //e.gc.
+					   
+					 //  e.gc.drawImage(bGImage, 0, 0,0,0,0,0, (int) (getShell().getBounds().width*0.90), (int) (getShell().getBounds().height*0.90));
+
+					   
 					   Point textSize = e.gc.stringExtent(Welcome);
 					   //e.gc.drawText(Welcome, (getSize().x - textSize.x)/2, (getSize().y - textSize.y)/2);
 					   e.gc.drawString(Welcome,  (getSize().x - textSize.x)/2, (getSize().y - textSize.y)/2);
@@ -51,7 +59,8 @@ public class WelcomeDisplayer extends Canvas {
 					          
 					          
 			});
-					      
+				
+			
 					  
 				getDisplay().syncExec(new Runnable() {
 				
@@ -73,5 +82,5 @@ public class WelcomeDisplayer extends Canvas {
 	}
 	
 	
-
+	
 }
