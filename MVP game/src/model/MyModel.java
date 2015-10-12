@@ -574,6 +574,21 @@ public class MyModel extends Observable implements Model{
 		encoder.close();
 		return true;
 	}
+
+
+	@Override
+	public void setMazeWithCurrentLocationFromGui(String mazeName, String currentX, String currentY, String currentZ) {
+		if( maze3dMap.containsKey(mazeName)&& properties.getUI().equals("GUI") )
+		{
+			Maze3d mazeToSave = maze3dMap.get(mazeName);
+			Position newStartPosition = new Position(new Integer(currentX), new Integer(currentY), new Integer(currentZ));
+			mazeToSave.setStartPosition(newStartPosition);
+			String newName = mazeName+" From"+currentX+","+currentY+","+currentZ+",";
+			maze3dMap.put(newName, mazeToSave);
+			solveMaze(newName, properties.getDefaultAlgorith());
+		}
+		
+	}
 	
 	
 }

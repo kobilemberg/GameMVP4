@@ -319,7 +319,21 @@ public class Presenter implements Observer {
 				break;
 				}
 				
-
+			case 13:
+				try {
+					if(args!=null)
+					{
+						String[] params = (String[])args;
+						//*************************************NameOfMaze,CurrentX, Currenty, Currentz**//
+						model.setMazeWithCurrentLocationFromGui(params[0],params[1],params[2],params[3]);
+					}
+					
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
+				
+				
 			default:
 				break;
 			}

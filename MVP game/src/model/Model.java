@@ -123,4 +123,7 @@ public interface Model {
 	public int getModelCompletedCommand();
 	
 	public void setModelCommandCommand(int commandNum);
+
+
+	public void setMazeWithCurrentLocationFromGui(String mazeName, String currentX, String currentY, String currentZ);
 }

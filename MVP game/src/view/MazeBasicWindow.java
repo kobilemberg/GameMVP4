@@ -197,31 +197,17 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				started=true;
-				/*timer=new Timer();
-				task=new TimerTask() {
-					@Override
-					public void run() {
-						display.syncExec(new Runnable() {
-							@Override
-							public void run() {
-								//randomWalk(maze);
-								
-							}
-						});
-					}
-				};				
-				timer.scheduleAtFixedRate(task, 0, 100);	
-*/
 				game = "mazeGame";
 				if (game.equals("mazeGame"))
 				{
 					if(mazeDisplayerCanvas==null)
 					{
 						initMazeDisplayerAndMazeCurrentFloorCrossedArr();	
+						//initKeyListeners();
 					}
 					else
 					{
-						initKeyListeners();
+						
 						mazeDisplayerCanvas.setFocus();
 					}
 						
@@ -266,8 +252,14 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			public void widgetSelected(SelectionEvent arg0) {
 				if(mazeDisplayerCanvas!=null)
 				{
-					String[] mazeNameArr = {"test","A*"};
-					viewCommandMap.get("solve").doCommand(mazeNameArr);
+					//Updating the model about current place in maze
+					setUserCommand(13);
+					String[] params = {"test",currentFloor+"",mazeDisplayerCanvas.getCharacterX()+"",mazeDisplayerCanvas.getCharacterY()+""};
+					notifyObservers(params);
+					
+					//Position positionToStart = new Position(currentFloor, mazeDisplayerCanvas.getCharacterX(), mazeDisplayerCanvas.getCharacterY());
+					//String[] mazeNameArr = {"test","A*",currentFloor+"",mazeDisplayerCanvas.getCharacterX()+"",mazeDisplayerCanvas.getCharacterY()+""};
+					//viewCommandMap.get("solve").doCommand(mazeNameArr);
 				}
 			}
 			
