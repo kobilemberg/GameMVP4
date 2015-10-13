@@ -60,7 +60,8 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	boolean started =false;
 	boolean won=false;
 	boolean isSolving = true;
-	String game; 
+	String game;
+	String mazeObjectName = "MyMaze"; 
 	WelcomeDisplayer welcomeDisplayerCanvas;
 	
 	
@@ -266,7 +267,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 					fileDialog.setFileName("Game.Game");
 					String selectedFile = fileDialog.open();
 					String selectedName = fileDialog.getFileName();
-					String[] args = {"test",fileDialog.getFilterPath()+"\\"+selectedName};
+					String[] args = {mazeObjectName,fileDialog.getFilterPath()+"\\"+selectedName};
 					viewCommandMap.get("save maze").doCommand(args);
 				}
 				else
@@ -294,7 +295,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 					fileLoadDialog.setFileName("Game.Game");
 					String selectedFileToLoad = fileLoadDialog.open();
 					String selectedName = fileLoadDialog.getFileName();
-					String[] args = {fileLoadDialog.getFilterPath()+"\\"+selectedName,"test",};
+					String[] args = {fileLoadDialog.getFilterPath()+"\\"+selectedName,mazeObjectName};
 					viewCommandMap.get("load maze").doCommand(args);
 				if(mazeObject!=null && mazeDisplayerCanvas!=null)
 				{
@@ -318,33 +319,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				started=true;
-				game = "mazeGame";
-				if (game.equals("mazeGame"))
-				{
-					if(mazeDisplayerCanvas==null)
-					{
-						initMazeDisplayerAndMazeCurrentFloorCrossedArr();	
-						//initKeyListeners();
-					}
-					else
-					{
-						
-						mazeDisplayerCanvas.setFocus();
-					}
-						
-					
-					/* UI Grid */ 
-
-				}
-				else
-				{
-					initGame(); 
-				}
-
-				startButton.setEnabled(false);
-				stopButton.setEnabled(true);
-//				/shell.layout();
+				startGame();
 			}
 			
 			@Override
@@ -389,7 +364,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 					isSolving=true;
 					//Updating the model about current place in maze
 					setUserCommand(13);
-					String[] params = {"test",currentFloor+"",mazeDisplayerCanvas.getCharacterX()+"",mazeDisplayerCanvas.getCharacterY()+""};
+					String[] params = {mazeObjectName,currentFloor+"",mazeDisplayerCanvas.getCharacterX()+"",mazeDisplayerCanvas.getCharacterY()+""};
 					notifyObservers(params);
 				}
 			}
@@ -410,7 +385,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 					isSolving=false;
 					//Updating the model about current place in maze
 					setUserCommand(13);
-					String[] params = {"test",currentFloor+"",mazeDisplayerCanvas.getCharacterX()+"",mazeDisplayerCanvas.getCharacterY()+""};
+					String[] params = {mazeObjectName,currentFloor+"",mazeDisplayerCanvas.getCharacterX()+"",mazeDisplayerCanvas.getCharacterY()+""};
 					notifyObservers(params);
 					
 					//Position positionToStart = new Position(currentFloor, mazeDisplayerCanvas.getCharacterX(), mazeDisplayerCanvas.getCharacterY());
@@ -426,6 +401,34 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		
 	}
 
+	public void startGame(){
+		started=true;
+		game = "mazeGame";
+		if (game.equals("mazeGame"))
+		{
+			if(mazeDisplayerCanvas==null)
+			{
+				initMazeDisplayerAndMazeCurrentFloorCrossedArr();	
+				//initKeyListeners();
+			}
+			else
+			{
+				mazeDisplayerCanvas.setFocus();
+			}
+				
+			
+			/* UI Grid */ 
+
+		}
+		else
+		{
+			initGame(); 
+		}
+
+		startButton.setEnabled(false);
+		stopButton.setEnabled(true);
+//		/shell.layout();
+	}
 	public String[] openGenerateWindow(){
 		
 		/* Generate New Maze open Pop-up window */ 
@@ -468,8 +471,14 @@ public class MazeBasicWindow extends BasicWindow implements View{
 				
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
+					mazeObjectName = mazeNameInput.getText(); 
 					String[] params = {mazeNameInput.getText(),"default",xInput.getText(),yInput.getText(),zInput.getText()};
+					started = true; 
+					game = "mazeGame";
 					viewCommandMap.get("generate 3d maze").doCommand(params);
+					//mazeDisplayerCanvas.setFocus();
+					startButton.setEnabled(false);
+					stopButton.setEnabled(true);
 				}
 				
 				@Override
@@ -592,12 +601,8 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	private void initMazeDisplayerAndMazeCurrentFloorCrossedArr() 
 	{
-		String[] mazeArgs =  {"test","default","2","10","18"};
+		String[] mazeArgs =  {mazeObjectName,"default","2","10","18"};
 		this.viewCommandMap.get("generate 3d maze").doCommand(mazeArgs);
-		
-		
-		
-
 	}
 	
 	private void initGame()
@@ -847,7 +852,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		out.println("Solution for "+mazeName+" is Ready, you can take it!");
 		out.flush();
 		
-		String[] mazeNameArr = {"test","A*"};
+		String[] mazeNameArr = {mazeObjectName,"A*"};
 		viewCommandMap.get("display solution").doCommand(mazeNameArr);
 	}
 	
