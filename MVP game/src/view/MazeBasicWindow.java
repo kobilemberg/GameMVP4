@@ -428,17 +428,19 @@ public class MazeBasicWindow extends BasicWindow implements View{
 
 	public String[] openGenerateWindow(){
 		
+		/* Generate New Maze open Pop-up window */ 
 		Shell child = new Shell(shell);
 		child.setLayout(new GridLayout(2,false));
 	    child.setSize(148, 188);
 	    child.setText("Generate Maze");
 	    child.open();
 	    
-	    /* Form: */ 
+	    /* Generate new maze form: */ 
 		    /* Maze Name: */ 
 		    Label mazeNameLabel = new Label(child,SWT.FILL);
 		    mazeNameLabel.setText("Name:");
 		    Text mazeNameInput = new Text(child, SWT.BORDER);
+		    mazeNameInput.setText("NewMaze");
 		    Label dummy = new Label(child, SWT.FILL); 
 		    
 		    /* Maze Floors: */ 
@@ -456,30 +458,26 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		    Label zLabel = new Label(child,SWT.FILL);
 		    zLabel.setText("Columns:");
 		    Text zInput = new Text(child, SWT.BORDER);
-	    
-		    
 
+		    Button send = new Button(child, SWT.NULL);
+		    send.setLayoutData(new GridData(SWT.FILL, SWT.None, false, false, 2, 1));
+		    send.setText("Generate");
+		    child.layout();
 		    
-	    Button send = new Button(child, SWT.NULL);
-
-	    
-	    send.setLayoutData(new GridData(SWT.FILL, SWT.None, false, false, 2, 1));
-	    send.setText("Generate");
-	    child.layout();
-	    send.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				System.out.println(mazeNameInput.getText());
+		    send.addSelectionListener(new SelectionListener() {
 				
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					String[] params = {mazeNameInput.getText(),"default",xInput.getText(),yInput.getText(),zInput.getText()};
+					viewCommandMap.get("generate 3d maze").doCommand(params);
+				}
 				
-			}
-		});
+				@Override
+				public void widgetDefaultSelected(SelectionEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 		return null; 
 	}
 	
