@@ -713,7 +713,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 					else if(p.getCameFromAction().equals("Left")){mazeDisplayerCanvas.moveLeft();}
 					else if(p.getCameFromAction().equals("Right")){mazeDisplayerCanvas.moveRight();}
 					
-					try {Thread.sleep(1000);} 
+					try {Thread.sleep(250);} 
 					catch (InterruptedException e) 
 					{
 						// TODO Auto-generated catch block

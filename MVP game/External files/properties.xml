@@ -8,7 +8,7 @@
    <string>MyMaze3dGenerator</string>
   </void>
   <void property="defaultSolver">
-   <string>BFS</string>
+   <string>A*</string>
   </void>
   <void property="numOfThreads">
    <int>30</int>
