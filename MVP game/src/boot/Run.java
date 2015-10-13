@@ -48,7 +48,7 @@ public class Run {
 			view.addObserver(presenter);
 			model.addObserver(presenter);
 			view.start();
-		}
+		} 
 		
 		else
 		{
