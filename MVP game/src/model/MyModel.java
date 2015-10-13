@@ -146,7 +146,7 @@ public class MyModel extends Observable implements Model{
 						if(generator.equals("mymaze3dgenerator"))
 						{
 							maze = new MyMaze3dGenerator();
-							errorNoticeToController("Generating maze with MyMaze3dGenerator as your request.");
+							// errorNoticeToController("Generating maze with MyMaze3dGenerator as your request.");
 						}
 						
 						else if(generator.equals("simplemazegenerator"))
@@ -162,12 +162,12 @@ public class MyModel extends Observable implements Model{
 						}
 						else if(properties.getDefaultAlgorith().equals("MyMaze3dGenerator"))
 						{
-							errorNoticeToController("Generating maze with MyMaze3dGenerator as your properties file.");
+							// errorNoticeToController("Generating maze with MyMaze3dGenerator as your properties file.");
 							maze = new MyMaze3dGenerator();
 						}
 						else
 						{
-							errorNoticeToController("Generating maze with MyMaze3dGenerator because there were no configurations.");
+							// errorNoticeToController("Generating maze with MyMaze3dGenerator because there were no configurations.");
 							maze = new MyMaze3dGenerator();
 						}
 						if(!floors.isEmpty()&&!lines.isEmpty()&&!columns.isEmpty())
@@ -578,7 +578,7 @@ public class MyModel extends Observable implements Model{
 
 	@Override
 	public void setMazeWithCurrentLocationFromGui(String mazeName, String currentX, String currentY, String currentZ) {
-		if( maze3dMap.containsKey(mazeName)&& properties.getUI().equals("GUI") )
+		if(maze3dMap.containsKey(mazeName))
 		{
 			Maze3d mazeToSave = maze3dMap.get(mazeName);
 			Position newStartPosition = new Position(new Integer(currentX), new Integer(currentY), new Integer(currentZ));
@@ -586,9 +586,6 @@ public class MyModel extends Observable implements Model{
 			String newName = mazeName+" From"+currentX+","+currentY+","+currentZ+",";
 			maze3dMap.put(newName, mazeToSave);
 			solveMaze(newName, properties.getDefaultAlgorith());
-		}
-		
+		}	
 	}
-	
-	
 }

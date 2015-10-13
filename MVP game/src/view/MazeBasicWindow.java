@@ -7,22 +7,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -43,6 +44,9 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	TimerTask task;
 	Button startButton; 
 	Button stopButton; 
+	Label metaDataLabel;
+	Label possibleKeysLabel;
+	Label dummyLabel;
 	HashMap<String, Command> viewCommandMap;
 	private String cliMenu;
 	BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
@@ -55,9 +59,9 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	MazeDisplayer mazeDisplayerCanvas;
 	boolean started =false;
 	boolean won=false;
+	boolean isSolving = true;
 	String game; 
 	WelcomeDisplayer welcomeDisplayerCanvas;
-	boolean isSolving = true;
 	
 	
 	public MazeBasicWindow(String title, int width, int height,HashMap<String, Command> viewCommandMap) {
@@ -68,100 +72,125 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	@Override
 	void initWidgets() {
 
-		
-		
-		
-		
+		/* General Grid Stuff */
 		GridLayout grid = new GridLayout(2,false); 
-		shell.setLayout(grid);
-        //shell.setMinimumSize(menuBar.get, height);
+		GridData stretchGridData = new GridData();
+		stretchGridData.verticalAlignment = GridData.FILL; 
+		stretchGridData.grabExcessVerticalSpace = true;
+		GridData gd = new GridData(SWT.LEFT, SWT.LEFT, false, false, 1, 1);
+		gd.heightHint = 100;
+		gd.widthHint = 110;
+		//gd.heightHint = SWT.DEFAULT;
 		
+		GridData fitGridData = new GridData(); 
+		fitGridData.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING; 
+		fitGridData.grabExcessVerticalSpace = false; 
+		
+		/* General Shell Stuff */ 
+		shell.setLayout(grid);
+		
+        //shell.setMinimumSize(menuBar.get, height);
+
+
         /* Main Bar Menu Items: File, Maze */
 		Menu menuBar = new Menu(shell, SWT.BAR);
 		MenuItem cascadeFileMenu = new MenuItem(menuBar, SWT.CASCADE);
         cascadeFileMenu.setText("&File");
         MenuItem cascadeMazeMenu = new MenuItem(menuBar, SWT.CASCADE);
         cascadeMazeMenu.setText("Maze");
-        
-        /* File Menu Items: Open Properties, Exit */  
-        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
-        cascadeFileMenu.setMenu(fileMenu);
-        MenuItem openProperties = new MenuItem(fileMenu, SWT.PUSH);
-        openProperties.setText("Open Properties");
-        MenuItem GenerateItem = new MenuItem(fileMenu, SWT.PUSH);
-        GenerateItem.setText("Generate Maze");
-        MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
-        exitItem.setText("&Exit");
-        //shell.setMenuBar(menuBar); // Generate Menu.
-        
-        
-        /* Maze Menu Items: Load, Save Maze */  
-        Menu mazeMenu = new Menu(shell, SWT.DROP_DOWN);
-        cascadeMazeMenu.setMenu(mazeMenu);
-        MenuItem loadMaze = new MenuItem(mazeMenu, SWT.PUSH);
-        loadMaze.setText("Load maze from file");
-        MenuItem saveMaze = new MenuItem(mazeMenu, SWT.PUSH);
-        saveMaze.setText("Save Maze to file");
-        shell.setMenuBar(menuBar); // Generate Menu.
-        
-        
-        
-        TabFolder MazeFolder = new TabFolder(shell, SWT.NULL);
+		
+	        /* File Menu Items: Open Properties, Exit */  
+	        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+	        cascadeFileMenu.setMenu(fileMenu);
+	        MenuItem openProperties = new MenuItem(fileMenu, SWT.PUSH);
+	        openProperties.setText("Open Properties");
+	        MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
+	        exitItem.setText("&Exit");
+	        //shell.setMenuBar(menuBar); // Generate Menu.
+	        
+	        
+	        /* Maze Menu Items: Load, Save Maze */  
+	        Menu mazeMenu = new Menu(shell, SWT.DROP_DOWN);
+	        cascadeMazeMenu.setMenu(mazeMenu);
+	        MenuItem loadMaze = new MenuItem(mazeMenu, SWT.PUSH);
+	        loadMaze.setText("Load maze from file");
+	        MenuItem saveMaze = new MenuItem(mazeMenu, SWT.PUSH);
+	        saveMaze.setText("Save Maze to file");
+	        shell.setMenuBar(menuBar); // Generate Menu.
+	        MenuItem GenerateItem = new MenuItem(mazeMenu, SWT.PUSH);
+	        GenerateItem.setText("Generate Maze");
 
-        TabItem playTab = new TabItem(MazeFolder, SWT.NULL);
-        playTab.setText("Maze");
+
+        /* Tab Folder */ 
+        TabFolder MazeFolder = new TabFolder(shell, SWT.NULL);
+        MazeFolder.setLayoutData(stretchGridData);
+
+        /* "Play" Tab */ 
+    	TabItem playTab = new TabItem(MazeFolder, SWT.NULL);
+        playTab.setText("Play");
         SashForm playForm = new SashForm(MazeFolder, SWT.VERTICAL);
         playTab.setControl(playForm);
+    
+	        Button generateNewMazeButton = new Button(playForm, SWT.PUSH);
+	        generateNewMazeButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+	        generateNewMazeButton.setText("Generate");
+	        
+	        Button solveButton = new Button(playForm, SWT.PUSH);
+	        solveButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+	        solveButton.setText("Solve");
+	        
+	        Button hintButton = new Button(playForm, SWT.PUSH);
+	        hintButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+	        hintButton.setText("Hint");
+	        
+	        /* MetaData Label */ 
+			metaDataLabel = new Label(playForm, SWT.FILL);
+			metaDataLabel.setLayoutData(gd);
+			metaDataLabel.setLayoutData(gd);
+			setMetaDataLabel(0, 0, 0, 0, 0, 0);
+			
+			/* Possible Keys Label */ 
+			possibleKeysLabel = new Label(playForm, SWT.FILL); 
+			possibleKeysLabel.setLayoutData(gd);
+			
+			/* Dummy Label */ 
+			dummyLabel = new Label(playForm, SWT.FILL); 
+			
+	        int[] play_weights = {1,1,1,2,2,6};
+	        playForm.setWeights(play_weights);
+	        
         
-        Button generateNewMazeButton = new Button(playForm, SWT.PUSH);
-        generateNewMazeButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-        generateNewMazeButton.setText("Generate");
-        
-        Button solveButton = new Button(playForm, SWT.PUSH);
-        solveButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-        solveButton.setText("Solve");
-        
-        Button hintButton = new Button(playForm, SWT.PUSH);
-        hintButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-        hintButton.setText("Hint");
+	        /* "Options" Tab */ 
+	        TabItem optionsTab = new TabItem(MazeFolder, SWT.NULL);
+	        optionsTab.setText("Options");
+	        SashForm optionsForm = new SashForm(MazeFolder, SWT.VERTICAL);
+	        optionsForm.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 0, 0));
+	        optionsTab.setControl(optionsForm);
+	        optionsForm.setSize(10, 100);
+	        
+		        startButton=new Button(optionsForm, SWT.PUSH);
+		        
 
-        /* Options form */ 
-        TabItem optionsTab = new TabItem(MazeFolder, SWT.NULL);
-        optionsTab.setText("Options");
-        SashForm optionsForm = new SashForm(MazeFolder, SWT.VERTICAL);
-        optionsTab.setControl(optionsForm);
-        optionsForm.setSize(10, 100);
+		        stopButton=new Button(optionsForm, SWT.PUSH);
+		        stopButton.setText("Stop");
+		        Button b = new Button(optionsForm, SWT.PUSH);
 
-        startButton=new Button(optionsForm, SWT.PUSH);
-        stopButton=new Button(optionsForm, SWT.PUSH);
+				/* Dummy Label */ 
+		        dummyLabel = new Label(optionsForm, SWT.FILL);
+
+		        int[] options_weights = {1,1,1,10000};
+		        optionsForm.setWeights(options_weights);
+		        
+		        
+
         changeButton(startButton, true, "Start");
-        stopButton.setText("Stop");
-        
-        Button testButton = new Button(optionsForm, SWT.PUSH);
-        testButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-        testButton.setText("Test!");
-        
-        
-        /* Options form */ 
-        Label label = new Label(shell, SWT.BORDER);
-    	//label.setSize(100,30);
-    	label.setLayoutData(new GridData(SWT.LEFT, SWT.LEFT, false, false, 1, 1));
-    	//label.setLocation(50, 50);
-    	label.setText("I am a Label");
-    	
-    	//Label shadow_sep_h = new Label(shell, SWT.SEPARATOR | SWT.SHADOW_OUT | SWT.HORIZONTAL);
-    	//shadow_sep_h.setBounds(50,80,100,50);
-    	
-    //	Label shadow_sep_v = new Label(shell, SWT.SEPARATOR | SWT.SHADOW_IN | SWT.VERTICAL);
-    //	shadow_sep_v.setBounds(50,100,5,100);
-        
-        
-        
+
+
+        /* Canvas Section */ 
         welcomeDisplayerCanvas = new  WelcomeDisplayer(shell, SWT.BORDER);
-		welcomeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
-        
-        
-        
+		welcomeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,1));
+
+
 		/* What happens when a user clicks "File" > "Open Properties" */  
 		openProperties.addSelectionListener(new SelectionListener() {
 			
@@ -228,15 +257,53 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				org.eclipse.swt.widgets.FileDialog fileDialog = new org.eclipse.swt.widgets.FileDialog(shell, SWT.SAVE);
-				fileDialog.setText("Save Maze to filev                                      ");
-				fileDialog.setFilterPath("C:/");
-				String[] fileTypes = {"*.game"}; 
-				fileDialog.setFilterExtensions(fileTypes);
-				fileDialog.setFileName("Game.Game");
-				String selectedFile = fileDialog.open();
-				String selectedName = fileDialog.getFileName();
-				String[] args = {"test",fileDialog.getFilterPath()+selectedName};
-				viewCommandMap.get("save maze").doCommand(args);
+				if(mazeObject!=null && mazeDisplayerCanvas!=null)
+				{
+					fileDialog.setText("Save Maze to file");
+					fileDialog.setFilterPath("C:/");
+					String[] fileTypes = {"*.Game"}; 
+					fileDialog.setFilterExtensions(fileTypes);
+					fileDialog.setFileName("Game.Game");
+					String selectedFile = fileDialog.open();
+					String selectedName = fileDialog.getFileName();
+					String[] args = {"test",fileDialog.getFilterPath()+"\\"+selectedName};
+					viewCommandMap.get("save maze").doCommand(args);
+				}
+				else
+					errorNoticeToUser("Play");
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+		});
+		
+
+		/* What happens when a user clicks "Maze" > "Load maze from file" */  
+		loadMaze.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				org.eclipse.swt.widgets.FileDialog fileLoadDialog = new org.eclipse.swt.widgets.FileDialog(shell, SWT.OPEN);
+				//if(mazeObject!=null && mazeDisplayerCanvas!=null)
+				{
+					fileLoadDialog.setText("Load maze from file");
+					fileLoadDialog.setFilterPath("C:\\");
+					String[] fileTypes = {"*.Game"}; 
+					fileLoadDialog.setFilterExtensions(fileTypes);
+					fileLoadDialog.setFileName("Game.Game");
+					String selectedFileToLoad = fileLoadDialog.open();
+					String selectedName = fileLoadDialog.getFileName();
+					String[] args = {fileLoadDialog.getFilterPath()+"\\"+selectedName,"test",};
+					viewCommandMap.get("load maze").doCommand(args);
+				if(mazeObject!=null && mazeDisplayerCanvas!=null)
+				{
+					changeButton(startButton, false, "Start");
+					started=true;
+				}
+				}
+				//else
+				//	errorNoticeToUser("Play");
 			}
 			
 			@Override
@@ -297,8 +364,20 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {}
 		});
-		
-		
+
+
+		/* What happens when a user clicks "[Generate]". */ 
+		generateNewMazeButton.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				openGenerateWindow();
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {}
+		});
 		
 		/* What happens when a user clicks "[Solve]". */
 		solveButton.addSelectionListener(new SelectionListener() {
@@ -312,10 +391,6 @@ public class MazeBasicWindow extends BasicWindow implements View{
 					setUserCommand(13);
 					String[] params = {"test",currentFloor+"",mazeDisplayerCanvas.getCharacterX()+"",mazeDisplayerCanvas.getCharacterY()+""};
 					notifyObservers(params);
-					
-					//Position positionToStart = new Position(currentFloor, mazeDisplayerCanvas.getCharacterX(), mazeDisplayerCanvas.getCharacterY());
-					//String[] mazeNameArr = {"test","A*",currentFloor+"",mazeDisplayerCanvas.getCharacterX()+"",mazeDisplayerCanvas.getCharacterY()+""};
-					//viewCommandMap.get("solve").doCommand(mazeNameArr);
 				}
 			}
 			
@@ -351,7 +426,63 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		
 	}
 
+	public String[] openGenerateWindow(){
+		
+		Shell child = new Shell(shell);
+		child.setLayout(new GridLayout(2,false));
+	    child.setSize(148, 188);
+	    child.setText("Generate Maze");
+	    child.open();
+	    
+	    /* Form: */ 
+		    /* Maze Name: */ 
+		    Label mazeNameLabel = new Label(child,SWT.FILL);
+		    mazeNameLabel.setText("Name:");
+		    Text mazeNameInput = new Text(child, SWT.BORDER);
+		    Label dummy = new Label(child, SWT.FILL); 
+		    
+		    /* Maze Floors: */ 
+		    dummy.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false, 2, 1));
+		    Label xLabel = new Label(child,SWT.FILL);
+		    xLabel.setText("Floors:");
+		    Text xInput = new Text(child, SWT.BORDER);
+		    
+		    /* Maze Columns: */ 
+		    Label yLabel = new Label(child,SWT.FILL);
+		    yLabel.setText("Rows:");
+		    Text yInput = new Text(child, SWT.BORDER);
+		    
+		    /* Maze Columns */ 
+		    Label zLabel = new Label(child,SWT.FILL);
+		    zLabel.setText("Columns:");
+		    Text zInput = new Text(child, SWT.BORDER);
+	    
+		    
 
+		    
+	    Button send = new Button(child, SWT.NULL);
+
+	    
+	    send.setLayoutData(new GridData(SWT.FILL, SWT.None, false, false, 2, 1));
+	    send.setText("Generate");
+	    child.layout();
+	    send.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				System.out.println(mazeNameInput.getText());
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		return null; 
+	}
+	
 	public Button getStartButton() {
 		return startButton;
 	}
@@ -369,7 +500,6 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			startButton.setEnabled(enabled);
 			stopButton.setEnabled(!(enabled));
 			stopButton.setLayoutData(new GridData(SWT.None, SWT.None, false, false, 1, 1));
-
 		}
 		else if (b == stopButton)
 		{
@@ -475,7 +605,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	private void initGame()
 	{
 		welcomeDisplayerCanvas = new  WelcomeDisplayer(shell, SWT.BORDER);
-		welcomeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2));
+		welcomeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,1));
 	}
 
 //	public static void main(String[] args) {
@@ -516,25 +646,24 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	
 	@Override
 	public void printMazeToUser(Maze3d mazeWithName,String name) {
-		mazeDisplayerCanvas=new Maze3dDisplayer(shell, SWT.BORDER);
-        mazeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
-       
-        //maze.forceFocus();
-        //maze.setLayoutData(new GridData(horizontalAlignment, verticalAlignment, grabExcessHorizontalSpace, grabExcessVerticalSpace, horizontalSpan, verticalSpan));
-		((Maze3dDisplayer)mazeDisplayerCanvas).setMazeBasicWindow(this);
-		initKeyListeners();
-		mazeObject = mazeWithName;
-		//System.out.println("mazeWithName: "+mazeWithName);
-		//crossedArr = mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
+		if(mazeDisplayerCanvas==null|| !welcomeDisplayerCanvas.isDisposed())
+		{
+			mazeDisplayerCanvas=new Maze3dDisplayer(shell, SWT.BORDER);
+	        mazeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,1)); 
+	        //maze.forceFocus();
+	        //maze.setLayoutData(new GridData(horizontalAlignment, verticalAlignment, grabExcessHorizontalSpace, grabExcessVerticalSpace, horizontalSpan, verticalSpan));
+			((Maze3dDisplayer)mazeDisplayerCanvas).setMazeBasicWindow(this);
+			initKeyListeners();
+			mazeObject = mazeWithName;
+			//System.out.println("mazeWithName: "+mazeWithName);
+			//crossedArr = mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
+		}
+		
 		String[] args={"x",mazeObject.getStartPosition().getXPosition()+"","for",name};
 		viewCommandMap.get("display cross section by").doCommand(args);
-		
-		
-		
 		this.mazeDisplayerCanvas.setExitX(mazeWithName.getGoalPosition().getYposition());
 		this.mazeDisplayerCanvas.setExitY(mazeWithName.getGoalPosition().getZposition());
 		this.mazeDisplayerCanvas.setExitFloor(mazeWithName.getGoalPosition().getXPosition()); 
-		
 		mazeDisplayerCanvas.setCharacterPosition(mazeWithName.getStartPosition().getYposition(), mazeWithName.getStartPosition().getZposition());
 	}
 	
@@ -624,7 +753,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 				//welcomeDisplayer.dispose();
 				//System.out.println("Test");
 				//maze.set
-				mazeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,2)); 
+				mazeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,1)); 
 				//maze.setBounds(welcomeDisplayer.getBounds());
 				welcomeDisplayerCanvas.dispose();
 				//maze.handle;
@@ -640,11 +769,55 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		out.println("Crossed maze: "+name+ " by axe: "+axe+" with index: "+index);
 		out.flush();
 		printArr(crossedArr);
+		
+		metaDataLabel.setText("hello");
 	}
 	
 	
+	public void setMetaDataLabel(int x,int y,int z,int goalX,int goalY,int goalZ)
+	{
+		String metaData =   "You:\t"+x+": {"+y+","+z+"}\nGoal:\t"+goalX+": {"+goalY+","+goalZ+"}";
+		
+		if (mazeDisplayerCanvas != null && mazeObject != null){
+			if (x == goalX && y == goalY && z == goalZ)
+			{
+				metaData += "\nYou Won!";
+			}
+			metaDataLabel.setText(metaData);
+			setPossibleKeysLabel(x, y, z);
+		}
+	}
 	
-	
+	public void setPossibleKeysLabel(int x, int y, int z){
+		String possibleKeysText = "    "; 
+		if (mazeDisplayerCanvas != null && mazeObject != null){
+			String[] possibleMoves = mazeObject.getPossibleMoves(new Position(x, y, z));
+			String result = ""; 
+			for (int i = 0; i < possibleMoves.length; i++) {
+				result += possibleMoves[i]+"";
+			}
+
+			if (result.contains("Up")){
+				possibleKeysText += "\u21E7";
+			}
+			if (result.contains("Down"))
+			{
+				possibleKeysText += "\u21E9";
+			}
+			
+			FontData[] fontData = metaDataLabel.getFont().getFontData();
+			for(int i = 0; i < fontData.length; ++i)
+			    fontData[i].setHeight(30);
+
+			final Font newFont = new Font(display, fontData);
+			possibleKeysLabel.setFont(newFont);
+
+			possibleKeysLabel.setText(possibleKeysText);
+
+
+		}
+
+	}
 	@Override
 	public void tellTheUserTheMazeIsSaved(String mazeName, String filename) {
 		out.println("Maze: "+mazeName+ " saved to:"+ filename);
@@ -655,6 +828,8 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	public void tellTheUserTheMazeIsLoaded(String fileName, String mazeName) {
 		out.println("Maze: "+mazeName+ " has been loaded from:"+ fileName);
 		out.flush();
+		String[] mazeNameArr={mazeName,};
+		this.viewCommandMap.get("display").doCommand(mazeNameArr);
 	}
 	
 	@Override
@@ -832,7 +1007,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	public void exit(){
 		if (started)
 		{
-			if (task != null && timer != null)
+			if (task != null || timer != null)
 			{
 				task.cancel();
 				timer.cancel();
