@@ -92,7 +92,19 @@ public class MazeBasicWindow extends BasicWindow implements View{
         GenerateItem.setText("Generate Maze");
         MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
         exitItem.setText("&Exit");
+        //shell.setMenuBar(menuBar); // Generate Menu.
+        
+        
+        /* Maze Menu Items: Load, Save Maze */  
+        Menu mazeMenu = new Menu(shell, SWT.DROP_DOWN);
+        cascadeMazeMenu.setMenu(mazeMenu);
+        MenuItem loadMaze = new MenuItem(mazeMenu, SWT.PUSH);
+        loadMaze.setText("Load maze from file");
+        MenuItem saveMaze = new MenuItem(mazeMenu, SWT.PUSH);
+        saveMaze.setText("Save Maze to file");
         shell.setMenuBar(menuBar); // Generate Menu.
+        
+        
         
         TabFolder MazeFolder = new TabFolder(shell, SWT.NULL);
 
@@ -169,7 +181,6 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
-				
 			}
 		});
 		
@@ -183,16 +194,12 @@ public class MazeBasicWindow extends BasicWindow implements View{
 					Text floors =new Text(shell, SWT.BORDER);
 					Text lines =new Text(shell, SWT.BORDER);
 					Text columns =new Text(shell, SWT.BORDER);
-					
 				};
-								
-				
 			}
 			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
-				
 			}
 		});
 
@@ -215,7 +222,30 @@ public class MazeBasicWindow extends BasicWindow implements View{
 				// TODO Auto-generated method stub
 				}
 		});
-
+		
+		/* What happens when a user clicks "Maze" > "Save maze to file" */  
+		saveMaze.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				org.eclipse.swt.widgets.FileDialog fileDialog = new org.eclipse.swt.widgets.FileDialog(shell, SWT.SAVE);
+				fileDialog.setText("Save Maze to filev                                      ");
+				fileDialog.setFilterPath("C:/");
+				String[] fileTypes = {"*.game"}; 
+				fileDialog.setFilterExtensions(fileTypes);
+				fileDialog.setFileName("Game.Game");
+				String selectedFile = fileDialog.open();
+				String selectedName = fileDialog.getFileName();
+				String[] args = {"test",fileDialog.getFilterPath()+selectedName};
+				viewCommandMap.get("save maze").doCommand(args);
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+		});
+		
+		
 		/* What happens when a user clicks "[Start]". */ 
 		startButton.addSelectionListener(new SelectionListener() {
 			
