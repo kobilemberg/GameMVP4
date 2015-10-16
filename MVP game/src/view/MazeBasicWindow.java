@@ -469,6 +469,9 @@ public class MazeBasicWindow extends BasicWindow implements View{
 					//mazeDisplayerCanvas.setFocus();
 					startButton.setEnabled(false);
 					stopButton.setEnabled(true);
+					child.dispose();
+					shell.layout();
+					mazeDisplayerCanvas.forceFocus();
 				}
 				
 				@Override
@@ -583,10 +586,10 @@ public class MazeBasicWindow extends BasicWindow implements View{
 					switch (e.keyCode) 
 					{
                         case SWT.PAGE_DOWN:	
-                        	pageDownKey=getFloorUpCrossedArr("DOWN");
+                        	pageDownKey=getFloorArr("DOWN");
                         	break;
                         case SWT.PAGE_UP:	
-                        	PageUp=getFloorUpCrossedArr("UP");
+                        	PageUp=getFloorArr("UP");
                         	break;
 					}
 				}
@@ -654,11 +657,12 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		this.mazeDisplayerCanvas.setExitX(mazeWithName.getGoalPosition().getYposition());
 		this.mazeDisplayerCanvas.setExitY(mazeWithName.getGoalPosition().getZposition());
 		this.mazeDisplayerCanvas.setExitFloor(mazeWithName.getGoalPosition().getXPosition()); 
+		((Maze3dDisplayer) mazeDisplayerCanvas).setCurrentFloor(currentFloor);
 		mazeDisplayerCanvas.setCharacterPosition(mazeWithName.getStartPosition().getYposition(), mazeWithName.getStartPosition().getZposition());
 	}
 	
 	
-	public boolean getFloorUpCrossedArr(String direction) 
+	public boolean getFloorArr(String direction) 
 	{
 		if(direction.toUpperCase().equals("UP"))
 		{
@@ -865,12 +869,12 @@ public class MazeBasicWindow extends BasicWindow implements View{
 					if(shell.isDisposed()){Thread.currentThread().interrupt();}
 					else if(p.getCameFromAction().equals("Down"))
 					{
-						getFloorUpCrossedArr("DOWN");
+						getFloorArr("DOWN");
 						mazeDisplayerCanvas.moveDown();
 					}
 					else if(p.getCameFromAction().equals("Up"))
 					{
-						getFloorUpCrossedArr("UP");
+						getFloorArr("UP");
 						mazeDisplayerCanvas.moveUp();
 					}	
 					else if(p.getCameFromAction().equals("Backward")){mazeDisplayerCanvas.moveForward();}
