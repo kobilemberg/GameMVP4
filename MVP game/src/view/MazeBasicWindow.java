@@ -170,7 +170,6 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	        optionsForm.setSize(10, 100);
 	        
 		        startButton=new Button(optionsForm, SWT.PUSH);
-		        
 
 		        stopButton=new Button(optionsForm, SWT.PUSH);
 		        stopButton.setText("Stop");
@@ -181,16 +180,12 @@ public class MazeBasicWindow extends BasicWindow implements View{
 
 		        int[] options_weights = {1,1,1,10000};
 		        optionsForm.setWeights(options_weights);
-		        
-		        
 
         changeButton(startButton, true, "Start");
-
 
         /* Canvas Section */ 
         welcomeDisplayerCanvas = new  WelcomeDisplayer(shell, SWT.BORDER);
 		welcomeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,1));
-
 
 		/* What happens when a user clicks "File" > "Open Properties" */  
 		openProperties.addSelectionListener(new SelectionListener() {
@@ -219,12 +214,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				//TODO 
-				Dialog dialog = new Dialog(shell, SWT.CENTER) {
-					Text floors =new Text(shell, SWT.BORDER);
-					Text lines =new Text(shell, SWT.BORDER);
-					Text columns =new Text(shell, SWT.BORDER);
-				};
+				openGenerateWindow();
 			}
 			
 			@Override
@@ -515,7 +505,6 @@ public class MazeBasicWindow extends BasicWindow implements View{
 			stopButton.setEnabled(enabled);
 			startButton.setEnabled(!(enabled));
 			startButton.setLayoutData(new GridData(SWT.FILL, SWT.None, false, false, 1, 1));
-
 		}
 		else
 		{
@@ -546,24 +535,26 @@ public class MazeBasicWindow extends BasicWindow implements View{
 				{
 					switch (e.keyCode) 
 					{
-						case SWT.ARROW_DOWN:	mazeDisplayerCanvas.moveBackward();
+						case SWT.ARROW_DOWN:	
+							mazeDisplayerCanvas.moveBackward();
 							break;
-						case SWT.ARROW_UP:		mazeDisplayerCanvas.moveForward();
+						case SWT.ARROW_UP:		
+							mazeDisplayerCanvas.moveForward();
 							break;
-						case SWT.ARROW_LEFT:	mazeDisplayerCanvas.moveLeft();
+						case SWT.ARROW_LEFT:	
+							mazeDisplayerCanvas.moveLeft();
 							break;
-						case SWT.ARROW_RIGHT:	mazeDisplayerCanvas.moveRight();
+						case SWT.ARROW_RIGHT:	
+							mazeDisplayerCanvas.moveRight();
 							break;
 						case SWT.PAGE_DOWN:
-							if(pageDownKey)
-							{
+							if(pageDownKey){
 								mazeDisplayerCanvas.moveDown();
 								pageDownKey=false;
 							}
 							break;
 						case SWT.PAGE_UP:
-							if(PageUp)
-							{
+							if(PageUp){
 								mazeDisplayerCanvas.moveUp();
 								PageUp=false;
 							}
@@ -574,9 +565,11 @@ public class MazeBasicWindow extends BasicWindow implements View{
                 {    
 		        	switch (e.keyCode) 
                     {
-                         case SWT.PAGE_DOWN:	pageDownKey=false;
+                         case SWT.PAGE_DOWN:	
+                        	 pageDownKey=false;
                         	 break;
-                         case SWT.PAGE_UP:		PageUp=false;
+                         case SWT.PAGE_UP:		
+                        	 PageUp=false;
                         	 break;
                     }
                 }
@@ -589,9 +582,11 @@ public class MazeBasicWindow extends BasicWindow implements View{
 				{
 					switch (e.keyCode) 
 					{
-                        case SWT.PAGE_DOWN:	pageDownKey=getFloorUpCrossedArr("DOWN");
+                        case SWT.PAGE_DOWN:	
+                        	pageDownKey=getFloorUpCrossedArr("DOWN");
                         	break;
-                        case SWT.PAGE_UP:	PageUp=getFloorUpCrossedArr("UP");
+                        case SWT.PAGE_UP:	
+                        	PageUp=getFloorUpCrossedArr("UP");
                         	break;
 					}
 				}
@@ -610,13 +605,6 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		welcomeDisplayerCanvas = new  WelcomeDisplayer(shell, SWT.BORDER);
 		welcomeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,1));
 	}
-
-//	public static void main(String[] args) {
-		//MazeBasicWindow win=new MazeBasicWindow("maze example", 500, 300);
-		//win.run();
-	//}
-
-
 
 	/**
 	* this method will print int[][] array
@@ -657,11 +645,10 @@ public class MazeBasicWindow extends BasicWindow implements View{
 	        //maze.setLayoutData(new GridData(horizontalAlignment, verticalAlignment, grabExcessHorizontalSpace, grabExcessVerticalSpace, horizontalSpan, verticalSpan));
 			((Maze3dDisplayer)mazeDisplayerCanvas).setMazeBasicWindow(this);
 			initKeyListeners();
-			mazeObject = mazeWithName;
 			//System.out.println("mazeWithName: "+mazeWithName);
 			//crossedArr = mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
 		}
-		
+		mazeObject = mazeWithName;
 		String[] args={"x",mazeObject.getStartPosition().getXPosition()+"","for",name};
 		viewCommandMap.get("display cross section by").doCommand(args);
 		this.mazeDisplayerCanvas.setExitX(mazeWithName.getGoalPosition().getYposition());
@@ -718,7 +705,7 @@ public class MazeBasicWindow extends BasicWindow implements View{
 				System.out.println("The cell is: "+crossedArrToCheck[mazeDisplayerCanvas.getCharacterX()][mazeDisplayerCanvas.getCharacterY()]);
 				if(crossedArrToCheck[mazeDisplayerCanvas.getCharacterX()][mazeDisplayerCanvas.getCharacterY()]==0)
 				{
-					this.currentFloorCrossedArr =crossedArrToCheck;
+					this.currentFloorCrossedArr = crossedArrToCheck;
 					currentFloor--;
 					((Maze3dDisplayer) mazeDisplayerCanvas).setCurrentFloor(currentFloor);
 					mazeDisplayerCanvas.mazeData = currentFloorCrossedArr;
@@ -748,22 +735,22 @@ public class MazeBasicWindow extends BasicWindow implements View{
 		
 		//crossedArr = mazeData.getCrossSectionByX(mazeData.getStartPosition().getXPosition());
 
-				mazeDisplayerCanvas.mazeData = crossedArr;
-				
-				this.currentFloor = mazeObject.getStartPosition().getXPosition();
-				//out.println("Maze: "+name+"\n"+mazeWithName.toString());
-				//out.flush();
-				//welcomeDisplayer.dispose();
-				//System.out.println("Test");
-				//maze.set
-				mazeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,1)); 
-				//maze.setBounds(welcomeDisplayer.getBounds());
-				welcomeDisplayerCanvas.dispose();
-				//maze.handle;
-				shell.layout();
-				mazeDisplayerCanvas.forceFocus();
-				
-				//shell.pack();
+		mazeDisplayerCanvas.mazeData = crossedArr;
+		
+		this.currentFloor = mazeObject.getStartPosition().getXPosition();
+		//out.println("Maze: "+name+"\n"+mazeWithName.toString());
+		//out.flush();
+		//welcomeDisplayer.dispose();
+		//System.out.println("Test");
+		//maze.set
+		mazeDisplayerCanvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true,1,1)); 
+		//maze.setBounds(welcomeDisplayer.getBounds());
+		welcomeDisplayerCanvas.dispose();
+		//maze.handle;
+		shell.layout();
+		mazeDisplayerCanvas.forceFocus();
+		
+		//shell.pack();
 		
 		
 		
